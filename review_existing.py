@@ -1,4 +1,4 @@
-﻿import bpy,sys,json,os,time,zipfile,hashlib,subprocess
+import bpy,sys,json,os,time,zipfile,hashlib,subprocess
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from rebuild_ops import render_review
@@ -18,6 +18,7 @@ for item in job['candidates']:
   with bpy.data.libraries.load(str(local),link=False) as (available,loaded):loaded.objects=available.objects
   objects=[o for o in loaded.objects if o]
   for obj in objects:bpy.context.scene.collection.objects.link(obj)
+  bpy.context.view_layer.update()
   obj=next(o for o in objects if o.get('rebuild_procedure_id')==item['procedure_id']);source=next(o for o in objects if o.name==obj['collision_reference']);metrics=source_fidelity(obj,source);assert metrics['source_profile_within_tolerance'],'Candidate source profile exceeds source-relative distance threshold:'+json.dumps(metrics)
   images=render_review(obj,[o for o in objects if o!=obj],out/(item['procedure_id']+'.blend'),detail_only=True);record=dict(procedure_id=item['procedure_id'],mesh=item['mesh'],source_candidate=item,source_fidelity=metrics,review_images=images,scope='existing_candidate_quality_review',geometry_unchanged=True,quality_accepted=False,final_game_accepted=False);records.append(record);(out/(item['procedure_id']+'-quality.json')).write_text(json.dumps(record))
  except Exception as e:failures.append(dict(procedure_id=item['procedure_id'],mesh=item['mesh'],error=str(e)))

@@ -51,7 +51,7 @@ def render_review(obj,extra,path,detail_only=False):
   if 'grass_detail' in o.name:o.hide_render=False
  scene.render.engine='CYCLES';scene.cycles.device='CPU';scene.cycles.samples=32;scene.render.resolution_x=384;scene.render.resolution_y=384;scene.render.resolution_percentage=100;scene.render.image_settings.file_format='PNG'
  if scene.world is None:scene.world=bpy.data.worlds.new('Review world')
- scene.world.color=(.15,.15,.15);centre=obj.matrix_world@(sum((Vector(corner) for corner in obj.bound_box),Vector())/8);radius=max(max(obj.dimensions),.0001)
+ bpy.context.view_layer.update();scene.world.color=(.15,.15,.15);centre=obj.matrix_world@(sum((Vector(corner) for corner in obj.bound_box),Vector())/8);radius=max(max(obj.dimensions),.0001)
  lampdata=bpy.data.lights.new('Review key','AREA');lampdata.energy=1000*radius*radius;lampdata.shape='DISK';lampdata.size=radius*2;lamp=bpy.data.objects.new('Review key',lampdata);scene.collection.objects.link(lamp);lamp.location=centre+Vector((radius,-radius,radius*2));lamp.rotation_euler=(centre-lamp.location).to_track_quat('-Z','Y').to_euler();lamp.hide_render=False
  camdata=bpy.data.cameras.new('Review camera');cam=bpy.data.objects.new('Review camera',camdata);scene.collection.objects.link(cam);scene.camera=cam;camdata.clip_start=radius*.001;camdata.clip_end=radius*100;camdata.type='ORTHO';camdata.ortho_scale=radius*1.5
  images=[]
