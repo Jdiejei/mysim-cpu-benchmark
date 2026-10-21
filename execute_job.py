@@ -1,5 +1,6 @@
-﻿import bpy,sys,os,json,time,hashlib,zipfile,subprocess,io,contextlib,shutil,traceback
+import bpy,sys,os,json,time,hashlib,zipfile,subprocess,io,contextlib,shutil,traceback
 from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 import import_patch
 from detail_ops import refine
 root=Path.cwd();name=sys.argv[sys.argv.index('--')+1];job=json.loads((root/'wave-input'/f'{name}.json').read_text());sources={s['key']:s for s in json.loads((root/'sources.json').read_text())};wave=os.environ.get('WAVE','0001');tag='candidates-wave-'+wave;out=root/'results'/name;out.mkdir(parents=True,exist_ok=True);start=time.monotonic();last_publish=0;records=[];failed=[];remaining=[];loaded=None
@@ -29,7 +30,7 @@ for index,recipe in enumerate(job['recipes']):
         expected=recipe.get('specification') or {};assert len(obj.data.vertices)==expected.get('vertices',len(obj.data.vertices)),'Source mesh vertex count changed'
         if recipe['category'] not in {'ground','grass'}:raise RuntimeError('Detailed category operator not yet validated; retain for next supported wave')
         result,extra=refine(obj,recipe,root/'wave-input');path=out/(recipe['procedure_id']+'.blend');bpy.data.libraries.write(str(path),{obj,*extra},compress=True)
-        result.update(procedure_id=recipe['procedure_id'],mesh=recipe['mesh'],source_key=key,category=recipe['category'],output=path.name,sha256=hashlib.sha256(path.read_bytes()).hexdigest());records.append(result)
+        result.update(procedure_id=recipe['procedure_id'],mesh=recipe['mesh'],source_key=key,category=recipe['category'],output=path.name,output_bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest());records.append(result)
         # Release added grass geometry after saving this item; its output is already durable.
         for detail in extra:bpy.data.objects.remove(detail,do_unlink=True)
     except Exception as e:failed.append({'procedure_id':recipe['procedure_id'],'mesh':recipe['mesh'],'error':str(e)});traceback.print_exc()

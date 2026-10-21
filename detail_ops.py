@@ -1,4 +1,4 @@
-﻿import bpy,bmesh,math,random,time
+import bpy,bmesh,math,random,time
 from mathutils import Vector
 
 def make_material(binding,root,category):
@@ -6,7 +6,7 @@ def make_material(binding,root,category):
     base=next((t for t in binding.get('textures',[]) if t['property'] in {'_BaseMap','_MainTex'} and t.get('packed')),None)
     if base:
         image=bpy.data.images.load(str(root/base['packed']['file']),check_existing=True);image.pack();tex=n.new('ShaderNodeTexImage');tex.image=image;uv=n.new('ShaderNodeTexCoord');mapping=n.new('ShaderNodeVectorMath');mapping.operation='MULTIPLY_ADD';sc=base.get('scale',{'x':1,'y':1});off=base.get('offset',{'x':0,'y':0});mapping.inputs[1].default_value=(sc['x'],sc['y'],1);mapping.inputs[2].default_value=(off['x'],off['y'],0);l.new(uv.outputs['UV'],mapping.inputs[0]);l.new(mapping.outputs['Vector'],tex.inputs['Vector']);l.new(tex.outputs['Color'],bs.inputs['Base Color'])
-    coords=n.new('ShaderNodeTexCoord');noise=n.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=250 if category=='ground' else 80;noise.inputs['Detail'].default_value=3;l.new(coords.outputs['Object'],noise.inputs['Vector']);bump=n.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.22;bump.inputs['Distance'].default_value=.0007 if category=='ground' else .0015;l.new(noise.outputs['Fac'],bump.inputs['Height']);l.new(bump.outputs['Normal'],bs.inputs['Normal']);return mat
+    coords=n.new('ShaderNodeNewGeometry');noise=n.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=250 if category=='ground' else 80;noise.inputs['Detail'].default_value=3;l.new(coords.outputs['Position'],noise.inputs['Vector']);bump=n.new('ShaderNodeBump');bump.inputs['Strength'].default_value=.22;bump.inputs['Distance'].default_value=.0007 if category=='ground' else .0015;l.new(noise.outputs['Fac'],bump.inputs['Height']);l.new(bump.outputs['Normal'],bs.inputs['Normal']);return mat
 
 def grass_detail(obj,recipe):
     obj.data.calc_loop_triangles();matrix=obj.matrix_world;tri=[];weights=[]
