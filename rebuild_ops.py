@@ -54,6 +54,13 @@ def render_review(obj,extra,path):
  images=[]
  for i,direction in enumerate([(1,-1,.8),(-1,-1,.35),(0,0,2)]):
   cam.location=centre+Vector(direction)*radius*2;cam.rotation_euler=(centre-cam.location).to_track_quat('-Z','Y').to_euler();scene.render.filepath=str(path.parent/(path.stem+f'-review-{i}.png'));bpy.ops.render.render(write_still=True);images.append(scene.render.filepath)
+ # Close-up evidence complements full silhouettes of long, thin track assets.
+ normal_matrix=obj.matrix_world.to_3x3().inverted().transposed()
+ upward=[p for p in obj.data.polygons if (normal_matrix@p.normal).normalized().z>.2]
+ polygon=max(upward or list(obj.data.polygons),key=lambda p:p.area)
+ target=obj.matrix_world@polygon.center;normal=(normal_matrix@polygon.normal).normalized()
+ corners=[obj.matrix_world@obj.data.vertices[i].co for i in polygon.vertices];longest=max((a-b).length for a,b in zip(corners,corners[1:]+corners[:1]));area=sum((corners[i]-corners[0]).cross(corners[i+1]-corners[0]).length/2 for i in range(1,len(corners)-1));width=2*area/max(longest,1e-12)
+ camdata.ortho_scale=max(radius*.025,min(radius*.25,width*6));cam.location=target+normal*radius*2+Vector((radius*.1,-radius*.1,0));cam.rotation_euler=(target-cam.location).to_track_quat('-Z','Y').to_euler();scene.render.resolution_x=512;scene.render.resolution_y=512;scene.cycles.samples=64;scene.render.filepath=str(path.parent/(path.stem+'-review-detail.png'));bpy.ops.render.render(write_still=True);images.append(scene.render.filepath)
  bpy.data.objects.remove(cam,do_unlink=True);bpy.data.objects.remove(lamp,do_unlink=True)
  for o in scene.objects:
   if o.name in visibility:o.hide_render=visibility[o.name]
