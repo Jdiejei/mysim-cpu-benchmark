@@ -42,7 +42,7 @@ def rebuild(obj,recipe,root):
  obj['rebuild_procedure_id']=recipe['procedure_id'];obj['quality_accepted']=False;obj['collision_reference']=collision.name
  return {'before':before,'after':{'vertices':len(obj.data.vertices),'faces':len(obj.data.polygons),'uv_layers':len(obj.data.uv_layers)},'changes':changes,'lods':lodstats,'bounds_max_delta':delta,'source_fidelity':fidelity,'automated_checks_passed':True,'scope':'procedural_geometry_reconstruction_candidate','semantic_redesign_validated':False,'quality_accepted':False,'seconds':time.monotonic()-start,'review_required':['visual_detail_and_reference_fidelity','category_specific_missing_components','Unity_material_collision_LOD_performance']},extras
 
-def render_review(obj,extra,path):
+def render_review(obj,extra,path,detail_only=False):
  # Inspect only this candidate, on CPU, from three views; preserve generated scene objects in saved asset.
  scene=bpy.context.scene;visibility={o.name:o.hide_render for o in scene.objects}
  for o in scene.objects:o.hide_render=True
@@ -55,7 +55,7 @@ def render_review(obj,extra,path):
  lampdata=bpy.data.lights.new('Review key','AREA');lampdata.energy=1000*radius*radius;lampdata.shape='DISK';lampdata.size=radius*2;lamp=bpy.data.objects.new('Review key',lampdata);scene.collection.objects.link(lamp);lamp.location=centre+Vector((radius,-radius,radius*2));lamp.rotation_euler=(centre-lamp.location).to_track_quat('-Z','Y').to_euler();lamp.hide_render=False
  camdata=bpy.data.cameras.new('Review camera');cam=bpy.data.objects.new('Review camera',camdata);scene.collection.objects.link(cam);scene.camera=cam;camdata.clip_start=radius*.001;camdata.clip_end=radius*100;camdata.type='ORTHO';camdata.ortho_scale=radius*1.5
  images=[]
- for i,direction in enumerate([(1,-1,.8),(-1,-1,.35),(0,0,2)]):
+ for i,direction in enumerate([] if detail_only else [(1,-1,.8),(-1,-1,.35),(0,0,2)]):
   cam.location=centre+Vector(direction)*radius*2;cam.rotation_euler=(centre-cam.location).to_track_quat('-Z','Y').to_euler();scene.render.filepath=str(path.parent/(path.stem+f'-review-{i}.png'));bpy.ops.render.render(write_still=True);images.append(scene.render.filepath)
  # Close-up evidence complements full silhouettes of long, thin track assets.
  normal_matrix=obj.matrix_world.to_3x3().inverted().transposed()
