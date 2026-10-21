@@ -19,6 +19,15 @@ def armco_geometry(obj):
   for v in verts:v.co=rot@v.co+Vector(location)
  # Close both rail skins and the rim: a physical steel section, not a two-sided sheet.
  bm.normal_update();bmesh.ops.solidify(bm,geom=list(bm.faces),thickness=height*.008)
+ # Reserve the source envelope for the physical steel shell. Corrugation miters
+ # can expand beyond the nominal gauge; fit only this rail, before adding posts.
+ shell_lo=min(v.co.y for v in bm.verts);shell_hi=max(v.co.y for v in bm.verts)
+ if shell_lo<lo[1] or shell_hi>hi[1]:
+  shell_scale=span[1]/max(shell_hi-shell_lo,1e-12)
+  assert shell_scale>.85,'Steel shell requires excessive source-envelope compression'
+  for v in bm.verts:v.co.y=lo[1]+(v.co.y-shell_lo)*shell_scale
+  obj['rail_shell_envelope_fit']=shell_scale
+
  if full_assembly:
   for fraction in [(.1+.8*i/max(1,math.ceil(span[0]*units[0]/2))) for i in range(math.ceil(span[0]*units[0]/2)+1)]:
    x=lo[0]+span[0]*fraction;z=(lo[2]+hi[2])/2;postwidth=min(.07/units[0],span[0]*.08);postdepth=min(.048/units[1],span[1]*.8);gauge=.004/units[0]
