@@ -2,6 +2,7 @@ import bpy,bmesh,math,time
 from mathutils import Vector
 from detail_ops import make_material,grass_detail
 from armco_ops import armco_geometry,armco_material
+from tyre_ops import tyre_geometry,tyre_material
 
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
@@ -9,7 +10,7 @@ def rebuild(obj,recipe,root):
  obj.data=original.copy();bm=bmesh.new();bm.from_mesh(obj.data);scale=max(max(obj.dimensions),.001);tolerance=min(.00001,scale*.000001)/max(max(abs(v) for v in obj.scale),1e-8)
  bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(obj.data);bm.free();obj.data.update()
  bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
- category=recipe['category'];component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
+ category=recipe['category'];is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
  # Surface thickness and road shape are never invented. Structural edges are dimensioned in world units.
  if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb']):
   edge=obj.modifiers.new('Dimensioned six-segment manufactured edge','BEVEL');edge.width=min(.003,scale*.001)/max(max(abs(v) for v in obj.scale),1e-8);edge.segments=6;edge.limit_method='ANGLE';edge.angle_limit=math.radians(35);edge.use_clamp_overlap=True;edge.harden_normals=True;bpy.ops.object.modifier_apply(modifier=edge.name);changes.append('six_segment_dimensioned_edge_geometry')
@@ -19,7 +20,7 @@ def rebuild(obj,recipe,root):
  obj.data.materials.clear()
  for binding in recipe['material_bindings']:obj.data.materials.append(make_material(binding,root,category))
  if component_changes:
-  obj.data.materials.clear();obj.data.materials.append(armco_material());changes.append('new_painted_steel_material_source_atlas_retained_as_provenance_not_stretched_onto_new_UVs')
+  obj.data.materials.clear();obj.data.materials.append(tyre_material() if is_tyre else armco_material());changes.append('new_family_material_source_atlas_retained_as_provenance_not_stretched_onto_new_UVs')
  if category=='grass':
   grass,_=grass_detail(obj,recipe)
   if grass:extras.append(grass);changes.append('curved_blade_cluster_geometry')
@@ -45,9 +46,9 @@ def render_review(obj,extra,path):
   if 'grass_detail' in o.name:o.hide_render=False
  scene.render.engine='CYCLES';scene.cycles.device='CPU';scene.cycles.samples=32;scene.render.resolution_x=384;scene.render.resolution_y=384;scene.render.resolution_percentage=100;scene.render.image_settings.file_format='PNG'
  if scene.world is None:scene.world=bpy.data.worlds.new('Review world')
- scene.world.color=(.15,.15,.15);centre=obj.matrix_world@(sum((Vector(corner) for corner in obj.bound_box),Vector())/8);radius=max(max(obj.dimensions),.1)
- lampdata=bpy.data.lights.new('Review key','AREA');lampdata.energy=1000;lampdata.shape='DISK';lampdata.size=radius*2;lamp=bpy.data.objects.new('Review key',lampdata);scene.collection.objects.link(lamp);lamp.location=centre+Vector((radius,-radius,radius*2));lamp.rotation_euler=(centre-lamp.location).to_track_quat('-Z','Y').to_euler();lamp.hide_render=False
- camdata=bpy.data.cameras.new('Review camera');cam=bpy.data.objects.new('Review camera',camdata);scene.collection.objects.link(cam);scene.camera=cam;camdata.type='ORTHO';camdata.ortho_scale=radius*1.5
+ scene.world.color=(.15,.15,.15);centre=obj.matrix_world@(sum((Vector(corner) for corner in obj.bound_box),Vector())/8);radius=max(max(obj.dimensions),.0001)
+ lampdata=bpy.data.lights.new('Review key','AREA');lampdata.energy=1000*radius*radius;lampdata.shape='DISK';lampdata.size=radius*2;lamp=bpy.data.objects.new('Review key',lampdata);scene.collection.objects.link(lamp);lamp.location=centre+Vector((radius,-radius,radius*2));lamp.rotation_euler=(centre-lamp.location).to_track_quat('-Z','Y').to_euler();lamp.hide_render=False
+ camdata=bpy.data.cameras.new('Review camera');cam=bpy.data.objects.new('Review camera',camdata);scene.collection.objects.link(cam);scene.camera=cam;camdata.clip_start=radius*.001;camdata.clip_end=radius*100;camdata.type='ORTHO';camdata.ortho_scale=radius*1.5
  images=[]
  for i,direction in enumerate([(1,-1,.8),(-1,-1,.35),(0,0,2)]):
   cam.location=centre+Vector(direction)*radius*2;cam.rotation_euler=(centre-cam.location).to_track_quat('-Z','Y').to_euler();scene.render.filepath=str(path.parent/(path.stem+f'-review-{i}.png'));bpy.ops.render.render(write_still=True);images.append(scene.render.filepath)

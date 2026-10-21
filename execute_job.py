@@ -28,7 +28,7 @@ for index,recipe in enumerate(job['recipes']):
             loaded=key;report['import_repairs']=dict(import_patch.COUNTS)
         obj=bpy.context.scene.objects.get(recipe['mesh']);assert obj is not None,'Mesh not found'
         expected=recipe.get('specification') or {};assert len(obj.data.vertices)==expected.get('vertices',len(obj.data.vertices)),'Source mesh vertex count changed'
-        if recipe['category']!='barrier' or 'armco' not in obj.name.lower():raise RuntimeError('Dedicated component reconstruction operator not yet validated for this asset family')
+        if recipe['category']!='barrier' or not ('armco' in obj.name.lower() or ('single' in obj.name.lower() and any(w in obj.name.lower() for w in ['tyre','tire']))):raise RuntimeError('Dedicated component reconstruction operator not yet validated for this asset family')
         result,extra=rebuild(obj,recipe,root/'wave-input');path=out/(recipe['procedure_id']+'.blend');result['review_images']=render_review(obj,extra,path);bpy.data.libraries.write(str(path),{obj,*extra},compress=True)
         result.update(procedure_id=recipe['procedure_id'],mesh=recipe['mesh'],source_key=key,category=recipe['category'],output=path.name,output_bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest());records.append(result)
         # Release added grass geometry after saving this item; its output is already durable.
