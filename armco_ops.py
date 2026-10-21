@@ -18,7 +18,7 @@ def armco_geometry(obj):
   verts=bmesh.ops.create_cone(bm,cap_ends=True,cap_tris=False,segments=12,radius1=.006/units[0],radius2=.006/units[0],depth=.004/units[1])['verts'];rot=Matrix.Rotation(math.pi/2,4,'X')
   for v in verts:v.co=rot@v.co+Vector(location)
  # Close both rail skins and the rim: a physical steel section, not a two-sided sheet.
- bm.normal_update();bmesh.ops.solidify(bm,geom=list(bm.faces),thickness=span[1]*.04)
+ bm.normal_update();bmesh.ops.solidify(bm,geom=list(bm.faces),thickness=height*.008)
  if full_assembly:
   for fraction in [(.1+.8*i/max(1,math.ceil(span[0]*units[0]/2))) for i in range(math.ceil(span[0]*units[0]/2)+1)]:
    x=lo[0]+span[0]*fraction;z=(lo[2]+hi[2])/2;postwidth=min(.07/units[0],span[0]*.08);postdepth=min(.048/units[1],span[1]*.8);gauge=.004/units[0]
