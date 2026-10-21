@@ -3,6 +3,7 @@ from mathutils import Vector
 from detail_ops import make_material,grass_detail
 from armco_ops import armco_geometry,armco_material
 from tyre_ops import tyre_geometry,tyre_material
+from kerb_ops import kerb_geometry
 
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
@@ -10,17 +11,17 @@ def rebuild(obj,recipe,root):
  obj.data=original.copy();bm=bmesh.new();bm.from_mesh(obj.data);scale=max(max(obj.dimensions),.001);tolerance=min(.00001,scale*.000001)/max(max(abs(v) for v in obj.scale),1e-8)
  bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(obj.data);bm.free();obj.data.update()
  bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
- category=recipe['category'];is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
+ category=recipe['category'];is_kerb=category=='ground' and any(t in obj.name.lower() for t in ['curb','kerb','ripple']);is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else kerb_geometry(obj,recipe) if is_kerb else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
  rebuilt_bm=bmesh.new();rebuilt_bm.from_mesh(obj.data);bmesh.ops.recalc_face_normals(rebuilt_bm,faces=list(rebuilt_bm.faces));nonmanifold=sum(not e.is_manifold for e in rebuilt_bm.edges);rebuilt_bm.to_mesh(obj.data);rebuilt_bm.free();assert nonmanifold==0,'Reconstructed component has nonmanifold edges';changes.append('closed_manifold_and_outward_normals_checked')
  # Surface thickness and road shape are never invented. Structural edges are dimensioned in world units.
- if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb']):
+ if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb','ripple']):
   edge=obj.modifiers.new('Dimensioned six-segment manufactured edge','BEVEL');edge.width=min(.003,scale*.001)/max(max(abs(v) for v in obj.scale),1e-8);edge.segments=6;edge.limit_method='ANGLE';edge.angle_limit=math.radians(35);edge.use_clamp_overlap=True;edge.harden_normals=True;bpy.ops.object.modifier_apply(modifier=edge.name);changes.append('six_segment_dimensioned_edge_geometry')
   normals=obj.modifiers.new('Area weighted manufactured normals','WEIGHTED_NORMAL');normals.keep_sharp=True
   try:bpy.ops.object.modifier_apply(modifier=normals.name)
   except RuntimeError:obj.modifiers.remove(normals)
  obj.data.materials.clear()
  for binding in recipe['material_bindings']:obj.data.materials.append(make_material(binding,root,category))
- if component_changes:
+ if component_changes and not is_kerb:
   obj.data.materials.clear();obj.data.materials.append(tyre_material() if is_tyre else armco_material());changes.append('new_family_material_source_atlas_retained_as_provenance_not_stretched_onto_new_UVs')
  if category=='grass':
   grass,_=grass_detail(obj,recipe)
