@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install Blender CPU runtime
         run: |
-          curl --fail --location --retry 2 https://download.blender.org/release/Blender4.5/blender-4.5.14-linux-x64.tar.xz -o /tmp/blender.tar.xz
+          curl --fail --location --retry 8 --retry-all-errors --retry-delay 2 --connect-timeout 30 --max-time 600 https://download.blender.org/release/Blender4.5/blender-4.5.14-linux-x64.tar.xz -o /tmp/blender.tar.xz
           mkdir -p /tmp/blender
           tar -xf /tmp/blender.tar.xz -C /tmp/blender --strip-components=1
       - name: Process assigned meshes and publish checkpoints
