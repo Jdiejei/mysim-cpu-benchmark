@@ -1,4 +1,4 @@
-ï»¿name: MySim candidate wave
+name: MySim candidate wave
 on:
   workflow_dispatch:
     inputs:
