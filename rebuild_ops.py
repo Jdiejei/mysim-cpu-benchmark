@@ -4,6 +4,7 @@ from detail_ops import make_material,grass_detail
 from armco_ops import armco_geometry,armco_material
 from tyre_ops import tyre_geometry,tyre_material
 from kerb_ops import kerb_geometry
+from source_fidelity import source_fidelity
 
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
@@ -30,6 +31,8 @@ def rebuild(obj,recipe,root):
  assert len(obj.data.uv_layers)==before['uv_layers'],'UV layers lost'
  delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));assert delta<=max(.01,scale*.002),f'Silhouette bounds changed excessively: before={before["bounds"]}, after={list(obj.dimensions)}, delta={delta}'
  for poly in obj.data.polygons:assert 0<=poly.material_index<max(1,len(obj.data.materials)),'Material index out of range'
+ fidelity=source_fidelity(obj,collision) if is_kerb else None
+ if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed kerb-relative profile tolerance: '+str(fidelity)
  lodstats=[]
  for level,ratio in enumerate([.65,.3,.12],1):
   lod=obj.copy();lod.data=obj.data.copy();lod.name=obj.name+'__LOD'+str(level);bpy.context.collection.objects.link(lod);bpy.context.view_layer.objects.active=lod;mod=lod.modifiers.new('Runtime simplification','DECIMATE');mod.ratio=ratio;mod.use_collapse_triangulate=True
@@ -37,7 +40,7 @@ def rebuild(obj,recipe,root):
   except RuntimeError:lod.modifiers.remove(mod)
   lod.hide_render=True;extras.append(lod);lodstats.append({'level':level,'vertices':len(lod.data.vertices),'faces':len(lod.data.polygons)})
  obj['rebuild_procedure_id']=recipe['procedure_id'];obj['quality_accepted']=False;obj['collision_reference']=collision.name
- return {'before':before,'after':{'vertices':len(obj.data.vertices),'faces':len(obj.data.polygons),'uv_layers':len(obj.data.uv_layers)},'changes':changes,'lods':lodstats,'bounds_max_delta':delta,'automated_checks_passed':True,'scope':'procedural_geometry_reconstruction_candidate','semantic_redesign_validated':False,'quality_accepted':False,'seconds':time.monotonic()-start,'review_required':['visual_detail_and_reference_fidelity','category_specific_missing_components','Unity_material_collision_LOD_performance']},extras
+ return {'before':before,'after':{'vertices':len(obj.data.vertices),'faces':len(obj.data.polygons),'uv_layers':len(obj.data.uv_layers)},'changes':changes,'lods':lodstats,'bounds_max_delta':delta,'source_fidelity':fidelity,'automated_checks_passed':True,'scope':'procedural_geometry_reconstruction_candidate','semantic_redesign_validated':False,'quality_accepted':False,'seconds':time.monotonic()-start,'review_required':['visual_detail_and_reference_fidelity','category_specific_missing_components','Unity_material_collision_LOD_performance']},extras
 
 def render_review(obj,extra,path):
  # Inspect only this candidate, on CPU, from three views; preserve generated scene objects in saved asset.
