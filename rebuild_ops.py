@@ -5,6 +5,7 @@ from armco_ops import armco_geometry,armco_material
 from tyre_ops import tyre_geometry,tyre_material
 from kerb_ops import kerb_geometry
 from source_fidelity import source_fidelity
+from drain_ops import drain_geometry
 
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
@@ -12,17 +13,17 @@ def rebuild(obj,recipe,root):
  obj.data=original.copy();bm=bmesh.new();bm.from_mesh(obj.data);scale=max(max(obj.dimensions),.001);tolerance=min(.00001,scale*.000001)/max(max(abs(v) for v in obj.scale),1e-8)
  bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(obj.data);bm.free();obj.data.update()
  bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
- category=recipe['category'];is_kerb=category=='ground' and any(t in obj.name.lower() for t in ['curb','kerb','ripple']);is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else kerb_geometry(obj,recipe) if is_kerb else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
+ category=recipe['category'];is_drain=category=='ground' and 'drain' in obj.name.lower();is_kerb=category=='ground' and any(t in obj.name.lower() for t in ['curb','kerb','ripple']);is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else kerb_geometry(obj,recipe) if is_kerb else drain_geometry(obj,recipe) if is_drain else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
  rebuilt_bm=bmesh.new();rebuilt_bm.from_mesh(obj.data);bmesh.ops.recalc_face_normals(rebuilt_bm,faces=list(rebuilt_bm.faces));nonmanifold=sum(not e.is_manifold for e in rebuilt_bm.edges);rebuilt_bm.to_mesh(obj.data);rebuilt_bm.free();assert nonmanifold==0,'Reconstructed component has nonmanifold edges';changes.append('closed_manifold_and_outward_normals_checked')
  # Surface thickness and road shape are never invented. Structural edges are dimensioned in world units.
- if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb','ripple']):
+ if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb','ripple','drain']):
   edge=obj.modifiers.new('Dimensioned six-segment manufactured edge','BEVEL');edge.width=min(.003,scale*.001)/max(max(abs(v) for v in obj.scale),1e-8);edge.segments=6;edge.limit_method='ANGLE';edge.angle_limit=math.radians(35);edge.use_clamp_overlap=True;edge.harden_normals=True;bpy.ops.object.modifier_apply(modifier=edge.name);changes.append('six_segment_dimensioned_edge_geometry')
   normals=obj.modifiers.new('Area weighted manufactured normals','WEIGHTED_NORMAL');normals.keep_sharp=True
   try:bpy.ops.object.modifier_apply(modifier=normals.name)
   except RuntimeError:obj.modifiers.remove(normals)
  obj.data.materials.clear()
  for binding in recipe['material_bindings']:obj.data.materials.append(make_material(binding,root,category))
- if component_changes and not is_kerb:
+ if component_changes and not (is_kerb or is_drain):
   obj.data.materials.clear();obj.data.materials.append(tyre_material() if is_tyre else armco_material());changes.append('new_family_material_source_atlas_retained_as_provenance_not_stretched_onto_new_UVs')
  if category=='grass':
   grass,_=grass_detail(obj,recipe)
@@ -31,8 +32,8 @@ def rebuild(obj,recipe,root):
  assert len(obj.data.uv_layers)==before['uv_layers'],'UV layers lost'
  delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));assert delta<=max(.01,scale*.002),f'Silhouette bounds changed excessively: before={before["bounds"]}, after={list(obj.dimensions)}, delta={delta}'
  for poly in obj.data.polygons:assert 0<=poly.material_index<max(1,len(obj.data.materials)),'Material index out of range'
- fidelity=source_fidelity(obj,collision) if is_kerb else None
- if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed kerb-relative profile tolerance: '+str(fidelity)
+ fidelity=source_fidelity(obj,collision) if (is_kerb or is_drain) else None
+ if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed source-relative profile tolerance: '+str(fidelity)
  lodstats=[]
  for level,ratio in enumerate([.65,.3,.12],1):
   lod=obj.copy();lod.data=obj.data.copy();lod.name=obj.name+'__LOD'+str(level);bpy.context.collection.objects.link(lod);bpy.context.view_layer.objects.active=lod;mod=lod.modifiers.new('Runtime simplification','DECIMATE');mod.ratio=ratio;mod.use_collapse_triangulate=True
@@ -40,7 +41,7 @@ def rebuild(obj,recipe,root):
   except RuntimeError:lod.modifiers.remove(mod)
   lod.hide_render=True;extras.append(lod);lodstats.append({'level':level,'vertices':len(lod.data.vertices),'faces':len(lod.data.polygons)})
  obj['rebuild_procedure_id']=recipe['procedure_id'];obj['quality_accepted']=False;obj['collision_reference']=collision.name
- return {'before':before,'after':{'vertices':len(obj.data.vertices),'faces':len(obj.data.polygons),'uv_layers':len(obj.data.uv_layers)},'changes':changes,'lods':lodstats,'bounds_max_delta':delta,'source_fidelity':fidelity,'automated_checks_passed':True,'scope':'procedural_geometry_reconstruction_candidate','semantic_redesign_validated':False,'quality_accepted':False,'seconds':time.monotonic()-start,'review_required':['visual_detail_and_reference_fidelity','category_specific_missing_components','Unity_material_collision_LOD_performance']},extras
+ return {'before':before,'after':{'vertices':len(obj.data.vertices),'faces':len(obj.data.polygons),'uv_layers':len(obj.data.uv_layers)},'changes':changes,'lods':lodstats,'bounds_max_delta':delta,'source_fidelity':fidelity,'operator_telemetry':{k:obj[k] for k in obj.keys() if k.startswith('drain_')},'automated_checks_passed':True,'scope':'procedural_geometry_reconstruction_candidate','semantic_redesign_validated':False,'quality_accepted':False,'seconds':time.monotonic()-start,'review_required':['visual_detail_and_reference_fidelity','category_specific_missing_components','Unity_material_collision_LOD_performance']},extras
 
 def render_review(obj,extra,path,detail_only=False):
  # Inspect only this candidate, on CPU, from three views; preserve generated scene objects in saved asset.
