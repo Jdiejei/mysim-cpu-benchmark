@@ -1,42 +1,61 @@
 ﻿import bpy,bmesh,math,json,statistics,time
 from pathlib import Path
-from mathutils import Vector
+from mathutils import Vector,Matrix
+from mathutils.geometry import delaunay_2d_cdt
+from drain_uv_geometry import area,clip_convex,capsule
 
 def drain_geometry(obj,recipe):
- start=time.monotonic();bindings=[t for m in recipe['material_bindings'] for t in m.get('textures',[]) if t['property']=='_BaseMap'];assert len(bindings)==1 and bindings[0]['path'].endswith('/gnd_base_drain_01.png'),'Dedicated grate reference not supported';binding=bindings[0];pattern=json.loads((Path(__file__).parent/'drain-pattern.json').read_text());w=pattern['width'];h=pattern['height'];weights=pattern['weights'];regions=pattern['slot_regions'];sx=binding.get('scale',{}).get('x',1);sy=binding.get('scale',{}).get('y',1);ox=binding.get('offset',{}).get('x',0);oy=binding.get('offset',{}).get('y',0);old=obj.data;names=[v.name for v in old.uv_layers];bm=bmesh.new();bm.from_mesh(old);uv=bm.loops.layers.uv.get(names[0]);assert uv,'Source grate has no UV0';ratios=[];scale=max(obj.dimensions);matrix=obj.matrix_world.to_3x3()
- def coord(loop):
-  v=loop[uv].uv;return Vector((v.x*sx+ox,v.y*sy+oy))
- for face in bm.faces:
-  for loop in face.loops:
-   span=(coord(loop)-coord(loop.link_loop_next)).length
-   if span>1e-6:ratios.append((matrix@(loop.vert.co-loop.link_loop_next.vert.co)).length/span)
- assert ratios,'Grate UV scale cannot be resolved';depth=min(statistics.median(ratios)*.006,scale*.0006);assert depth>0,'Invalid source-relative grate depth';target=1/128;iterations=0;max_uv_edge=0
- def affected(face):
-  cs=[coord(l) for l in face.loops];a=min(p.x for p in cs);b=max(p.x for p in cs);c=min(p.y for p in cs);d=max(p.y for p in cs);assert b-a<=8 and d-c<=8,'Grate UV tile extent needs separate subdivision planning'
-  for tx in range(math.floor(a),math.floor(b)+1):
-   for ty in range(math.floor(c),math.floor(d)+1):
-    if any(b>=x0+tx-target and a<=x1+tx+target and d>=y0+ty-target and c<=y1+ty+target for x0,y0,x1,y1 in regions):return True
-  return False
- for iteration in range(10):
-  selected=set();max_uv_edge=0
-  for face in bm.faces:
-   if not affected(face):continue
-   for loop in face.loops:
-    length=(coord(loop)-coord(loop.link_loop_next)).length;max_uv_edge=max(max_uv_edge,length)
-    if length>target:selected.add(loop.edge)
-  if not selected:break
-  assert len(bm.faces)<600000 and len(selected)<400000,'Grate tessellation memory budget reached; no automatic quality downgrade'
-  bmesh.ops.subdivide_edges(bm,edges=list(selected),cuts=1,use_grid_fill=True,smooth=0);iterations=iteration+1
- else:raise RuntimeError('Grate target UV-space resolution not reached within10 adaptive rounds')
- def sample(p):
-  x=(p.x%1)*w-.5;y=(p.y%1)*h-.5;ix=math.floor(x);iy=math.floor(y);fx=x-ix;fy=y-iy
+ start=time.monotonic();bindings=[t for m in recipe['material_bindings'] for t in m.get('textures',[]) if t['property']=='_BaseMap'];assert len(bindings)==1 and bindings[0]['path'].endswith('/gnd_base_drain_01.png'),'Dedicated grate reference not supported';binding=bindings[0];pattern=json.loads((Path(__file__).parent/'drain-pattern.json').read_text());w=pattern['width'];h=pattern['height'];weights=pattern['weights'];raw_boxes=pattern['slot_regions'];full_height=statistics.median(y1-y0 for x0,y0,x1,y1 in raw_boxes if y0>.001 and y1<.999);boxes=[]
+ for x0,y0,x1,y1 in raw_boxes:
+  if y0<.001:y0=y1-full_height
+  if y1>.999:y1=y0+full_height
+  boxes.append((x0,y0,x1,y1))
+ sx=binding.get('scale',{}).get('x',1);sy=binding.get('scale',{}).get('y',1);ox=binding.get('offset',{}).get('x',0);oy=binding.get('offset',{}).get('y',0);old=obj.data;old.calc_loop_triangles();names=[u.name for u in old.uv_layers];assert names and sx and sy,'Source grate UV transform invalid';matrix=obj.matrix_world.copy();linear=matrix.to_3x3();scale=max(obj.dimensions);origin=Vector(tuple((min(v.co[i] for v in old.vertices)+max(v.co[i] for v in old.vertices))/2 for i in range(3)));ratios=[]
+ def uvpoint(index):
+  uv=old.uv_layers[0].data[index].uv;return (uv.x*sx+ox,uv.y*sy+oy)
+ for tri in old.loop_triangles:
+  for a,b in [(0,1),(1,2),(2,0)]:
+   distance=math.dist(uvpoint(tri.loops[a]),uvpoint(tri.loops[b]))
+   if distance>1e-6:ratios.append((linear@(old.vertices[tri.vertices[a]].co-old.vertices[tri.vertices[b]].co)).length/distance)
+ assert ratios,'No resolved source UV-to-surface scale';depth=min(statistics.median(ratios)*.006,scale*.0006);down=linear.inverted()@Vector((0,0,-depth));vertices=[];faces=[];materials=[];uv_values=[[] for _ in names];tile_count=0;max_uv_span=0;maximum_weight=0;moved=0
+ def sample(point):
+  x=(point[0]%1)*w-.5;y=(point[1]%1)*h-.5;ix=math.floor(x);iy=math.floor(y);fx=x-ix;fy=y-iy
   return sum(weights[((iy+dy)%h)*w+(ix+dx)%w]*(fx if dx else 1-fx)*(fy if dy else 1-fy) for dx,dy in [(0,0),(1,0),(0,1),(1,1)])
- down=matrix.inverted()@Vector((0,0,-depth));moved=0;maximum=0
- for vert in bm.verts:
-  samples=[sample(coord(loop)) for loop in vert.link_loops];amount=min(samples) if samples else 0
-  if amount>1e-6:vert.co+=down*amount;moved+=1;maximum=max(maximum,amount)
- assert moved>0 and maximum>.5,'No resolved physical slot wells were generated';bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(old);bm.free();old.update()
+ # Blender4.5 CDT API verified against official mathutils_geometry.cc.
+ # Tile clipping avoids raster subdivision of long/repeated source UV spans.
+ for tri in old.loop_triangles:
+  uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);coords=[tuple(old.vertices[i].co) for i in tri.vertices];layer_values=[[tuple(layer.data[i].uv) for i in tri.loops] for layer in old.uv_layers]
+  if abs(den)<1e-12:
+   base=len(vertices)
+   for j in range(3):
+    vertices.append(tuple(coords[j][k]-origin[k] for k in range(3)))
+    for layer_index in range(len(names)):uv_values[layer_index].append(layer_values[layer_index][j])
+   faces.append((base,base+1,base+2));materials.append(tri.material_index);continue
+  span_u=max(p[0] for p in uv)-min(p[0] for p in uv);span_v=max(p[1] for p in uv)-min(p[1] for p in uv);max_uv_span=max(max_uv_span,span_u,span_v);assert (math.ceil(span_u)+1)*(math.ceil(span_v)+1)<20000,'Source UV tile bounding budget exceeded:'+str((span_u,span_v))
+  for tx in range(math.floor(min(p[0] for p in uv)),math.floor(max(p[0] for p in uv))+1):
+   for ty in range(math.floor(min(p[1] for p in uv)),math.floor(max(p[1] for p in uv))+1):
+    domain=clip_convex(uv,[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)])
+    if not domain:continue
+    tile_count+=1;assert tile_count<=10000,'Source grate tile-fragment budget exceeded';domain=[(x-tx,y-ty) for x,y in domain];points=list(domain);edges=[(i,(i+1)%len(points)) for i in range(len(points))]
+    for box in boxes:
+     radius=(box[3]-box[1])/2
+     for ring in range(6):
+      contour=clip_convex(capsule(*box,inset=radius*.4*ring/5,segments=16),domain)
+      if not contour:continue
+      base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
+    result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False);base=len(vertices)
+    for point in result[0]:
+     p=(point.x+tx,point.y+ty);wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;blend=(wa,wb,1-wa-wb);amount=sample(p);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*coords[j][k] for j in range(3))-origin[k]+down[k]*amount for k in range(3)))
+     for layer_index in range(len(names)):uv_values[layer_index].append(tuple(sum(blend[j]*layer_values[layer_index][j][k] for j in range(3)) for k in range(2)))
+    for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
+    assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
+ assert moved and maximum_weight>.5,'No physical slot recesses resolved';mesh=bpy.data.meshes.new(old.name+'__physical_grate');mesh.from_pydata(vertices,[],faces);mesh.update()
+ for layer_index,name in enumerate(names):
+  layer=mesh.uv_layers.new(name=name)
+  for loop in mesh.loops:layer.data[loop.index].uv=uv_values[layer_index][loop.vertex_index]
+ for poly,material in zip(mesh.polygons,materials):poly.material_index=material
+ obj.data=mesh;obj.matrix_world=matrix@Matrix.Translation(origin);bpy.context.view_layer.update();bm=bmesh.new();bm.from_mesh(mesh);tolerance=max(max(abs(v) for v in obj.dimensions)/max(linear.col[i].length for i in range(3))*2e-7,1e-7);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(mesh);bm.free();mesh.update()
  if boundaries:
-  shell=obj.modifiers.new('Closed source-following grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(matrix.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
- assert [v.name for v in obj.data.uv_layers]==names,'Grate UV/lightmap channels changed';obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_adaptive_rounds']=iterations;obj['drain_geometry_seconds']=time.monotonic()-start
- return ['source_texture_measured12_slot_regions','adaptive_source_UV_space_physical_tessellation','visible_recessed_slot_wells_and_soft_lips','source_frame_profile_and_road_contact_retained','original_UV0_and_UV1_lightmap_page_coordinates_interpolated_without_repacking','closed_source_following_backing','original_driving_collision_retained_separately']
+  shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
+ obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_UV_tile_fragments']=tile_count;obj['drain_max_source_UV_span']=max_uv_span;obj['drain_local_origin_offset']=list(origin);obj['drain_geometry_seconds']=time.monotonic()-start
+ return ['source_reference12_slot_regions','UV_tile_clipped_constrained_triangulation','six_ring_rounded_physical_slot_lips_and_recessed_wells','source_weathering_UV0_and_lightmap_UV1_preserved_without_repacking','local_origin_precision_recenter_with_original_world_placement_preserved','closed_source_following_backing','original_driving_collision_retained']
