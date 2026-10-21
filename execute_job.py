@@ -19,7 +19,7 @@ for index,recipe in enumerate(job['recipes']):
         key=recipe['source_key'];s=sources[key]
         if key!=loaded:
             folder=root/'cache';folder.mkdir(exist_ok=True);archive=folder/s['archive']
-            if not archive.exists():subprocess.run(['gh','release','download','inputs-v1','--repo',os.environ['GITHUB_REPOSITORY'],'--pattern',s['archive'],'--dir',str(folder)],check=True)
+            if not archive.exists():subprocess.run(['gh','release','download','inputs-v1','--repo',os.environ.get('INPUT_REPOSITORY','Shashanksaraswat123939/mysim-cpu-benchmark'),'--pattern',s['archive'],'--dir',str(folder)],check=True)
             with zipfile.ZipFile(archive) as z:data=z.read('source.fbx')
             assert hashlib.sha256(data).hexdigest()==s['sha256'],'Input source SHA mismatch';local=folder/'source.fbx';local.write_bytes(data);del data;bpy.ops.wm.read_factory_settings(use_empty=True);log=io.StringIO()
             with contextlib.redirect_stdout(log),contextlib.redirect_stderr(log):bpy.ops.import_scene.fbx(filepath=str(local),use_anim=False)
