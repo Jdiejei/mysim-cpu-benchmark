@@ -1,0 +1,22 @@
+[
+  {
+    "source": "Assets/RealRacing/Source/Bathurst/processed/high/bathurst.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Bathurst\\processed\\high\\bathurst.fbx",
+    "bytes": 59506608,
+    "mesh_references": 5304,
+    "key": "b86f128cc80007fd",
+    "sha256": "8ce82690b5ef61c7a862dfff592d8d6d3d8f26a95f0ca193595d85cad7a095ed",
+    "archive": "b86f128cc80007fd.zip",
+    "zip_bytes": 21560098
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_650s_gt3/2015_mclaren_650s_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_650s_gt3\\2015_mclaren_650s_gt3_a.fbx",
+    "bytes": 1601296,
+    "mesh_references": 62,
+    "key": "589235a8753aa5ae",
+    "sha256": "f38a0eed0dcc1b0e2c153cf291d06eda547d965ac5231ae709b7ef281bdc8308",
+    "archive": "589235a8753aa5ae.zip",
+    "zip_bytes": 1278407
+  }
+]

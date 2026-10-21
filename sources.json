@@ -1,0 +1,1552 @@
+[
+  {
+    "source": "Assets/RealRacing/Source/Bathurst/processed/high/bathurst.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Bathurst\\processed\\high\\bathurst.fbx",
+    "bytes": 59506608,
+    "mesh_references": 5304,
+    "key": "b86f128cc80007fd",
+    "sha256": "8ce82690b5ef61c7a862dfff592d8d6d3d8f26a95f0ca193595d85cad7a095ed",
+    "archive": "b86f128cc80007fd.zip",
+    "zip_bytes": 21560098
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_650s_gt3/2015_mclaren_650s_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_650s_gt3\\2015_mclaren_650s_gt3_a.fbx",
+    "bytes": 1601296,
+    "mesh_references": 62,
+    "key": "589235a8753aa5ae",
+    "sha256": "f38a0eed0dcc1b0e2c153cf291d06eda547d965ac5231ae709b7ef281bdc8308",
+    "archive": "589235a8753aa5ae.zip",
+    "zip_bytes": 1278407
+  },
+  {
+    "source": "Assets/MySimulator/Art/BathurstTimberLamp/Bathurst_timber_lamp_LOD0.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\MySimulator\\Art\\BathurstTimberLamp\\Bathurst_timber_lamp_LOD0.fbx",
+    "bytes": 204652,
+    "mesh_references": 1,
+    "key": "57cebacdd4917a65",
+    "sha256": "27bad0bb7ed24f4c0d9aa3f4ce6a630fe5caff5bbe2debba291b2a0391af2b77",
+    "archive": "57cebacdd4917a65.zip",
+    "zip_bytes": 175385
+  },
+  {
+    "source": "Assets/MySimulator/Art/BathurstTimberLamp/Bathurst_timber_lamp_LOD1.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\MySimulator\\Art\\BathurstTimberLamp\\Bathurst_timber_lamp_LOD1.fbx",
+    "bytes": 143772,
+    "mesh_references": 1,
+    "key": "cc19a56673ad2cb9",
+    "sha256": "266736b89900db306ce31e59bd640e5fdcd67c187ed933ae486cc63874bad114",
+    "archive": "cc19a56673ad2cb9.zip",
+    "zip_bytes": 123979
+  },
+  {
+    "source": "Assets/MySimulator/Art/BathurstTimberLamp/Bathurst_timber_lamp_LOD2.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\MySimulator\\Art\\BathurstTimberLamp\\Bathurst_timber_lamp_LOD2.fbx",
+    "bytes": 69916,
+    "mesh_references": 1,
+    "key": "0988ee99252aa282",
+    "sha256": "6e0a8409ac7e3e39e6d398e7e834d66d1e5a0c8538e7b516ac35af95ece3c5d5",
+    "archive": "0988ee99252aa282.zip",
+    "zip_bytes": 52303
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_650s_gt3/2015_mclaren_650s_gt3_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_650s_gt3\\2015_mclaren_650s_gt3_int_a.fbx",
+    "bytes": 734480,
+    "mesh_references": 32,
+    "key": "add7bf8ef9188b67",
+    "sha256": "3e04413a5800434ec4556e388d93e19a41b0912bb2edefd2e6dde325d474c16a",
+    "archive": "add7bf8ef9188b67.zip",
+    "zip_bytes": 596267
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_650s_gt3/2015_mclaren_650s_gt3_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_650s_gt3\\2015_mclaren_650s_gt3_shared.fbx",
+    "bytes": 528496,
+    "mesh_references": 2,
+    "key": "ec1ce873fb68d996",
+    "sha256": "43f0ddf4f69a1958f44f710da368bef210390a30b8a55d7d7bd8fd6fe4090429",
+    "archive": "ec1ce873fb68d996.zip",
+    "zip_bytes": 340190
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_p1_gtr/2015_mclaren_p1_gtr_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_p1_gtr\\2015_mclaren_p1_gtr_a.fbx",
+    "bytes": 1484944,
+    "mesh_references": 56,
+    "key": "02530d518fc2af49",
+    "sha256": "53c00ff0631b17f7f720c174ba8983037e28b0558ee187f42a46471cbf0c2570",
+    "archive": "02530d518fc2af49.zip",
+    "zip_bytes": 1163645
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_p1_gtr/2015_mclaren_p1_gtr_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_p1_gtr\\2015_mclaren_p1_gtr_int_a.fbx",
+    "bytes": 887456,
+    "mesh_references": 35,
+    "key": "7bf6b27aa0c28db2",
+    "sha256": "e2e2800b0c8103d2e48bac2c699d111bc92904340cde019d53c24dcaf0ead4c3",
+    "archive": "7bf6b27aa0c28db2.zip",
+    "zip_bytes": 738676
+  },
+  {
+    "source": "Assets/RealRacing/Source/2015_mclaren_p1_gtr/2015_mclaren_p1_gtr_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2015_mclaren_p1_gtr\\2015_mclaren_p1_gtr_shared.fbx",
+    "bytes": 441408,
+    "mesh_references": 2,
+    "key": "459c36b641e99c1c",
+    "sha256": "ec6fd156839b88c3a256dd1da62bd4e2aab2834daf18e2301151135f507d6e3b",
+    "archive": "459c36b641e99c1c.zip",
+    "zip_bytes": 254915
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_chevrolet_c7r/2016_chevrolet_c7r_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_chevrolet_c7r\\2016_chevrolet_c7r_a.fbx",
+    "bytes": 1508608,
+    "mesh_references": 57,
+    "key": "bc0cbcb9c1dac706",
+    "sha256": "51f2625ec5c29024a0060f12dc38f5390b2e9b225fcc963fd012fb42530d6149",
+    "archive": "bc0cbcb9c1dac706.zip",
+    "zip_bytes": 1186259
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_chevrolet_c7r/2016_chevrolet_c7r_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_chevrolet_c7r\\2016_chevrolet_c7r_int_a.fbx",
+    "bytes": 855888,
+    "mesh_references": 42,
+    "key": "cb7a658fccc3e8c2",
+    "sha256": "077c056908f3b38a6109f80df7d261e98a823e829f2e20d78b81d68b09aaefcc",
+    "archive": "cb7a658fccc3e8c2.zip",
+    "zip_bytes": 666089
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_chevrolet_c7r/2016_chevrolet_c7r_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_chevrolet_c7r\\2016_chevrolet_c7r_shared.fbx",
+    "bytes": 572048,
+    "mesh_references": 2,
+    "key": "6268f186c0af6ac5",
+    "sha256": "8da7c2022ca4b170e5886b2f928d4cd019716e7518a19d640f8aabcf39bf06f7",
+    "archive": "6268f186c0af6ac5.zip",
+    "zip_bytes": 353766
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_ford_gt_lm/2016_ford_gt_lm_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_ford_gt_lm\\2016_ford_gt_lm_a.fbx",
+    "bytes": 1410752,
+    "mesh_references": 62,
+    "key": "dcdbd281cc86d9c2",
+    "sha256": "639de4d8f7d6b8ed6a27fa1f4b9f32b753e3f36ea1baef789c2584b07a316eaa",
+    "archive": "dcdbd281cc86d9c2.zip",
+    "zip_bytes": 1073346
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_ford_gt_lm/2016_ford_gt_lm_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_ford_gt_lm\\2016_ford_gt_lm_int_a.fbx",
+    "bytes": 767440,
+    "mesh_references": 40,
+    "key": "5d344322f2e8c84d",
+    "sha256": "bccde2bb7775a315197eb250d9c532578ecc00b9cd6a8d35cc168a3c4132c0a5",
+    "archive": "5d344322f2e8c84d.zip",
+    "zip_bytes": 568329
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_ford_gt_lm/2016_ford_gt_lm_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_ford_gt_lm\\2016_ford_gt_lm_shared.fbx",
+    "bytes": 525376,
+    "mesh_references": 2,
+    "key": "c1510f07e08ac8c4",
+    "sha256": "61e0e5f85028e6fa97f1120287cb282b4265b02c37178a63a535d80359230f78",
+    "archive": "c1510f07e08ac8c4.zip",
+    "zip_bytes": 320957
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_mercedes_amg_gt3/2016_mercedes_amg_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_mercedes_amg_gt3\\2016_mercedes_amg_gt3_a.fbx",
+    "bytes": 1502384,
+    "mesh_references": 60,
+    "key": "a68250a4f696ed7c",
+    "sha256": "49a12c83de1baf239a2ccb995c64caf3fd34bdc8f1ae4f4d82d2ddcd61ade831",
+    "archive": "a68250a4f696ed7c.zip",
+    "zip_bytes": 1192089
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_mercedes_amg_gt3/2016_mercedes_amg_gt3_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_mercedes_amg_gt3\\2016_mercedes_amg_gt3_int_a.fbx",
+    "bytes": 999488,
+    "mesh_references": 37,
+    "key": "f859f9fed14d60cb",
+    "sha256": "333261d9d027959ad5579ca26762cf37ddc9885e9f44bbac5eaf1277dccd8a0b",
+    "archive": "f859f9fed14d60cb.zip",
+    "zip_bytes": 832142
+  },
+  {
+    "source": "Assets/RealRacing/Source/2016_mercedes_amg_gt3/2016_mercedes_amg_gt3_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2016_mercedes_amg_gt3\\2016_mercedes_amg_gt3_shared.fbx",
+    "bytes": 554064,
+    "mesh_references": 2,
+    "key": "b4d8a28a7c60226e",
+    "sha256": "7de49904d294c7a3fd68c119475b6132c871719aed42e91150a47dc079dff132",
+    "archive": "b4d8a28a7c60226e.zip",
+    "zip_bytes": 392429
+  },
+  {
+    "source": "Assets/RealRacing/Source/2017_bugatti_chiron/2017_bugatti_chiron_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2017_bugatti_chiron\\2017_bugatti_chiron_a.fbx",
+    "bytes": 1524464,
+    "mesh_references": 60,
+    "key": "8213aea307814c96",
+    "sha256": "84440cf6d9f9e61d42e1c9bc45a821a895883c887d88b1d0c48428a05ef2a094",
+    "archive": "8213aea307814c96.zip",
+    "zip_bytes": 1193769
+  },
+  {
+    "source": "Assets/RealRacing/Source/2017_bugatti_chiron/2017_bugatti_chiron_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2017_bugatti_chiron\\2017_bugatti_chiron_int_a.fbx",
+    "bytes": 1398496,
+    "mesh_references": 48,
+    "key": "ccdaa8b5afd0c877",
+    "sha256": "147eb1ba911de8c4395710a1c0137bda04f2c2e7b5c8db4cd2df2fc787faca1b",
+    "archive": "ccdaa8b5afd0c877.zip",
+    "zip_bytes": 1187085
+  },
+  {
+    "source": "Assets/RealRacing/Source/2017_bugatti_chiron/2017_bugatti_chiron_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2017_bugatti_chiron\\2017_bugatti_chiron_shared.fbx",
+    "bytes": 654176,
+    "mesh_references": 2,
+    "key": "48039ef672fa054f",
+    "sha256": "dee98dd0bab29b253499bc61edef854e3812cbf8f259fe30e4c469cf307d185c",
+    "archive": "48039ef672fa054f.zip",
+    "zip_bytes": 471784
+  },
+  {
+    "source": "Assets/RealRacing/Source/2017_oreca_07_lmp2/2017_oreca_07_lmp2_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2017_oreca_07_lmp2\\2017_oreca_07_lmp2_a.fbx",
+    "bytes": 1978448,
+    "mesh_references": 54,
+    "key": "d58806096f593d1b",
+    "sha256": "a6687fcd3eca0835191e5777995fb2ee1d22dffe8b16cfbe5c41f4f28eb65290",
+    "archive": "d58806096f593d1b.zip",
+    "zip_bytes": 1677902
+  },
+  {
+    "source": "Assets/RealRacing/Source/2017_oreca_07_lmp2/2017_oreca_07_lmp2_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2017_oreca_07_lmp2\\2017_oreca_07_lmp2_int_a.fbx",
+    "bytes": 1456272,
+    "mesh_references": 41,
+    "key": "5d9511f6e26d1fb7",
+    "sha256": "b8b2d5c99bc4024a4d79cfe27ac2b62d9548d2db6761613bbdb7ffe3cc89751a",
+    "archive": "5d9511f6e26d1fb7.zip",
+    "zip_bytes": 1249576
+  },
+  {
+    "source": "Assets/RealRacing/Source/2017_oreca_07_lmp2/2017_oreca_07_lmp2_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2017_oreca_07_lmp2\\2017_oreca_07_lmp2_shared.fbx",
+    "bytes": 752368,
+    "mesh_references": 3,
+    "key": "e89cb96a69098114",
+    "sha256": "ce3103bff8d5ddf52807acae779ce5af9ece7cc604e33d2203b71e48d44eeaa1",
+    "archive": "e89cb96a69098114.zip",
+    "zip_bytes": 555860
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_acura_nsx_gt3/2018_acura_nsx_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_acura_nsx_gt3\\2018_acura_nsx_gt3_a.fbx",
+    "bytes": 1865696,
+    "mesh_references": 55,
+    "key": "999c2245f5a0c89a",
+    "sha256": "3b63dcd64eab11e06845f681d8e7b0d5879c8a80e4bdc68146bee502dd65c898",
+    "archive": "999c2245f5a0c89a.zip",
+    "zip_bytes": 1561376
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_acura_nsx_gt3/2018_acura_nsx_gt3_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_acura_nsx_gt3\\2018_acura_nsx_gt3_int_a.fbx",
+    "bytes": 1834768,
+    "mesh_references": 47,
+    "key": "0d97d92e1a3f9da6",
+    "sha256": "aa663ecb697a7088106abe70385333440f7ff36d8b683894ac0907c4b71ce1f9",
+    "archive": "0d97d92e1a3f9da6.zip",
+    "zip_bytes": 1611628
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_acura_nsx_gt3/2018_acura_nsx_gt3_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_acura_nsx_gt3\\2018_acura_nsx_gt3_shared.fbx",
+    "bytes": 659360,
+    "mesh_references": 2,
+    "key": "cf59fe570a27b0d1",
+    "sha256": "eb6e9767f4fcc79e509966a2a1fbd5d50802154c7f76a3d76da559b95a6cbeee",
+    "archive": "cf59fe570a27b0d1.zip",
+    "zip_bytes": 473642
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_astonmartin_gte/2018_astonmartin_gte_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_astonmartin_gte\\2018_astonmartin_gte_a.fbx",
+    "bytes": 2039872,
+    "mesh_references": 60,
+    "key": "4c791363b961472b",
+    "sha256": "7210a72857e265e1de7ee91cba05ee518158af53b153c2552ffe3f1c5411829d",
+    "archive": "4c791363b961472b.zip",
+    "zip_bytes": 1699661
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_astonmartin_gte/2018_astonmartin_gte_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_astonmartin_gte\\2018_astonmartin_gte_int_a.fbx",
+    "bytes": 1229072,
+    "mesh_references": 36,
+    "key": "45fcec713a082b91",
+    "sha256": "bc047427aa9f237386eda8af61426044e18a968ba46aab7d67a5d1e2dd9fe8f4",
+    "archive": "45fcec713a082b91.zip",
+    "zip_bytes": 1052688
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_astonmartin_gte/2018_astonmartin_gte_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_astonmartin_gte\\2018_astonmartin_gte_shared.fbx",
+    "bytes": 680512,
+    "mesh_references": 2,
+    "key": "978c7a81a21b11ed",
+    "sha256": "079ac25847c858a5134f2fc5dbfee319c8b3586333f282e6c994e8b06888c48a",
+    "archive": "978c7a81a21b11ed.zip",
+    "zip_bytes": 486115
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_audi_r8_gt4/2018_audi_r8_gt4_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_audi_r8_gt4\\2018_audi_r8_gt4_a.fbx",
+    "bytes": 1973600,
+    "mesh_references": 56,
+    "key": "8e8e740cd73a8778",
+    "sha256": "ffb455be41ace92cae1bd6175f6b66df5b860d429e9767f4389273832667ea86",
+    "archive": "8e8e740cd73a8778.zip",
+    "zip_bytes": 1665991
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_audi_r8_gt4/2018_audi_r8_gt4_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_audi_r8_gt4\\2018_audi_r8_gt4_int_a.fbx",
+    "bytes": 1176864,
+    "mesh_references": 44,
+    "key": "1988f7b4317b1bde",
+    "sha256": "8cf9501deceb05f1a9feee2eff7b5024b9708b300930e3b5607a959a4e85c9f2",
+    "archive": "1988f7b4317b1bde.zip",
+    "zip_bytes": 955835
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_audi_r8_gt4/2018_audi_r8_gt4_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_audi_r8_gt4\\2018_audi_r8_gt4_shared.fbx",
+    "bytes": 711040,
+    "mesh_references": 3,
+    "key": "a7badba9a9890248",
+    "sha256": "e37b40ba711008947a19492038810ec48096a1f899050431bfacc99bff2b2a07",
+    "archive": "a7badba9a9890248.zip",
+    "zip_bytes": 482558
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m4_gt4/2018_bmw_m4_gt4_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m4_gt4\\2018_bmw_m4_gt4_a.fbx",
+    "bytes": 1941600,
+    "mesh_references": 64,
+    "key": "efe1f30790fdca57",
+    "sha256": "2582b3eb44c80da616d87d9a609946da33a474004d83ed368f3ad5893c1290fc",
+    "archive": "efe1f30790fdca57.zip",
+    "zip_bytes": 1574948
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m4_gt4/2018_bmw_m4_gt4_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m4_gt4\\2018_bmw_m4_gt4_int_a.fbx",
+    "bytes": 1236864,
+    "mesh_references": 40,
+    "key": "2eaf3c5fae4f81f6",
+    "sha256": "c798006633ff60306a45c2f17cd968be213c9a6507ca97d8476c6d850330d0a8",
+    "archive": "2eaf3c5fae4f81f6.zip",
+    "zip_bytes": 1039088
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m4_gt4/2018_bmw_m4_gt4_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m4_gt4\\2018_bmw_m4_gt4_shared.fbx",
+    "bytes": 565936,
+    "mesh_references": 2,
+    "key": "6d0dcd60c2527be2",
+    "sha256": "6778755de08bf988ea8694282a0e42e651a64a1eaaf221bfc85bac00c35ebcbd",
+    "archive": "6d0dcd60c2527be2.zip",
+    "zip_bytes": 373983
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m6_gt3/2018_bmw_m6_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m6_gt3\\2018_bmw_m6_gt3_a.fbx",
+    "bytes": 1957184,
+    "mesh_references": 58,
+    "key": "2bf0a533464f2827",
+    "sha256": "e2b76a1cbabb620a291057b769fe2b6284fe44ebcb1531ae6a7928e6259bd0d5",
+    "archive": "2bf0a533464f2827.zip",
+    "zip_bytes": 1637173
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m6_gt3/2018_bmw_m6_gt3_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m6_gt3\\2018_bmw_m6_gt3_int_a.fbx",
+    "bytes": 1293184,
+    "mesh_references": 31,
+    "key": "ed81fc03d9a08880",
+    "sha256": "c9894eddc05a29738aa42f8035448167edcf636f4c7df8b38e8ca193a82fee56",
+    "archive": "ed81fc03d9a08880.zip",
+    "zip_bytes": 1139598
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m6_gt3/2018_bmw_m6_gt3_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m6_gt3\\2018_bmw_m6_gt3_shared.fbx",
+    "bytes": 578944,
+    "mesh_references": 2,
+    "key": "773f72c40e72cbec",
+    "sha256": "d6f0007ead8a935156b33cf67dd0b68d83908a95221fbdd5087a9446466f8ca0",
+    "archive": "773f72c40e72cbec.zip",
+    "zip_bytes": 387334
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m8_gte/2018_bmw_m8_gte_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m8_gte\\2018_bmw_m8_gte_a.fbx",
+    "bytes": 1946304,
+    "mesh_references": 58,
+    "key": "a44206ba478e8b80",
+    "sha256": "0955fe0f834eed1d04be10c928a6c8fcfd24079200845f17305e1b76acc1b478",
+    "archive": "a44206ba478e8b80.zip",
+    "zip_bytes": 1622271
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m8_gte/2018_bmw_m8_gte_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m8_gte\\2018_bmw_m8_gte_int_a.fbx",
+    "bytes": 1266304,
+    "mesh_references": 34,
+    "key": "5e178274e79cbec6",
+    "sha256": "5af47a0dd20b18e63486ce9384e553e6ed07ce92c8ec7fcade76cbcb21f8856c",
+    "archive": "5e178274e79cbec6.zip",
+    "zip_bytes": 1109717
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_bmw_m8_gte/2018_bmw_m8_gte_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_bmw_m8_gte\\2018_bmw_m8_gte_shared.fbx",
+    "bytes": 654928,
+    "mesh_references": 2,
+    "key": "9a7a3a032f152d97",
+    "sha256": "a0ef1c1ef5935d8c2afd96d39f23e2b783700edf956138e63a15bfa92271aa6e",
+    "archive": "9a7a3a032f152d97.zip",
+    "zip_bytes": 474845
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_chevrolet_camaro_gt4r/2018_chevrolet_camaro_gt4r_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_chevrolet_camaro_gt4r\\2018_chevrolet_camaro_gt4r_a.fbx",
+    "bytes": 2017472,
+    "mesh_references": 55,
+    "key": "84148a934d5079de",
+    "sha256": "cd9e3c23b22c79d2d4ce1f2e2c8db6124786fe3ef31b1071c2ac7cf361da43ab",
+    "archive": "84148a934d5079de.zip",
+    "zip_bytes": 1695520
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_chevrolet_camaro_gt4r/2018_chevrolet_camaro_gt4r_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_chevrolet_camaro_gt4r\\2018_chevrolet_camaro_gt4r_int_a.fbx",
+    "bytes": 1127376,
+    "mesh_references": 35,
+    "key": "a5461ccc344552e3",
+    "sha256": "98b7c5a605e5261a480ca136abe37168e8298c2b05252a79bfe16e28ac7a9433",
+    "archive": "a5461ccc344552e3.zip",
+    "zip_bytes": 941275
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_chevrolet_camaro_gt4r/2018_chevrolet_camaro_gt4r_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_chevrolet_camaro_gt4r\\2018_chevrolet_camaro_gt4r_shared.fbx",
+    "bytes": 979936,
+    "mesh_references": 4,
+    "key": "601004a89b30d6f9",
+    "sha256": "571daa41404928a55a24c93389dc933f82e7e1bee44cf999cd968aeb07b13341",
+    "archive": "601004a89b30d6f9.zip",
+    "zip_bytes": 682524
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_chevrolet_camaro_zl1_1le/2018_chevrolet_camaro_zl1_1le_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_chevrolet_camaro_zl1_1le\\2018_chevrolet_camaro_zl1_1le_a.fbx",
+    "bytes": 2046000,
+    "mesh_references": 60,
+    "key": "fd1839fa7eefbf28",
+    "sha256": "840cdf21c84701cdb0e2161f78f96c4ab55950e968d82dd0039b3c4cb4804fb1",
+    "archive": "fd1839fa7eefbf28.zip",
+    "zip_bytes": 1707733
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_chevrolet_camaro_zl1_1le/2018_chevrolet_camaro_zl1_1le_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_chevrolet_camaro_zl1_1le\\2018_chevrolet_camaro_zl1_1le_int_a.fbx",
+    "bytes": 1458704,
+    "mesh_references": 57,
+    "key": "d68a582ac994a2cd",
+    "sha256": "d915616f6a92657ef8b43840aae13e658dfb04b38d5c5fa22905d8f857196fa5",
+    "archive": "d68a582ac994a2cd.zip",
+    "zip_bytes": 1206133
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_chevrolet_camaro_zl1_1le/2018_chevrolet_camaro_zl1_1le_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_chevrolet_camaro_zl1_1le\\2018_chevrolet_camaro_zl1_1le_shared.fbx",
+    "bytes": 761136,
+    "mesh_references": 3,
+    "key": "0ec6ff61341b3b39",
+    "sha256": "78f8bdbd043cf83951aaeaed01e7119c7fdc2ef34b392b26f5f43aa016c86096",
+    "archive": "0ec6ff61341b3b39.zip",
+    "zip_bytes": 521821
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_ferrari_488_gt3/2018_ferrari_488_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_ferrari_488_gt3\\2018_ferrari_488_gt3_a.fbx",
+    "bytes": 1585296,
+    "mesh_references": 57,
+    "key": "a6e6923dae3c1967",
+    "sha256": "08209158faec497868a00f3ddce3bcc2d6694a599520169b1907802aabb94d48",
+    "archive": "a6e6923dae3c1967.zip",
+    "zip_bytes": 1236746
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_ferrari_488_gt3/2018_ferrari_488_gt3_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_ferrari_488_gt3\\2018_ferrari_488_gt3_int_a.fbx",
+    "bytes": 1017264,
+    "mesh_references": 44,
+    "key": "5ed5c8d87dca33a0",
+    "sha256": "c35a0851c9bb711edec71516fecc69a81d180cdbab805bb93d1daa6dc7554e19",
+    "archive": "5ed5c8d87dca33a0.zip",
+    "zip_bytes": 812370
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_ferrari_488_gt3/2018_ferrari_488_gt3_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_ferrari_488_gt3\\2018_ferrari_488_gt3_shared.fbx",
+    "bytes": 755216,
+    "mesh_references": 4,
+    "key": "4ba78147f1cc8fa2",
+    "sha256": "8ce0e2f98e9947279cdc0012ce1248b377494b77ab1f9f36da43d8aa9c8e2e20",
+    "archive": "4ba78147f1cc8fa2.zip",
+    "zip_bytes": 471299
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_lamborghini_huracan_gt3/2018_lamborghini_huracan_gt3_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_lamborghini_huracan_gt3\\2018_lamborghini_huracan_gt3_a.fbx",
+    "bytes": 1699728,
+    "mesh_references": 57,
+    "key": "efc63b40e47f3d7c",
+    "sha256": "f90df1de5aa3e237f83cb909134188123a54d6265d5bb91662c85ffc331b7ba2",
+    "archive": "efc63b40e47f3d7c.zip",
+    "zip_bytes": 1369415
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_lamborghini_huracan_gt3/2018_lamborghini_huracan_gt3_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_lamborghini_huracan_gt3\\2018_lamborghini_huracan_gt3_int_a.fbx",
+    "bytes": 1251248,
+    "mesh_references": 45,
+    "key": "a07fd9e76ac57ff7",
+    "sha256": "4183b78daea9cd016a800f7bf8ff5816297018a7c3f1160d8bc839d57967c8b8",
+    "archive": "a07fd9e76ac57ff7.zip",
+    "zip_bytes": 1031207
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_lamborghini_huracan_gt3/2018_lamborghini_huracan_gt3_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_lamborghini_huracan_gt3\\2018_lamborghini_huracan_gt3_shared.fbx",
+    "bytes": 562912,
+    "mesh_references": 2,
+    "key": "590abca31475e47f",
+    "sha256": "8dab39970567dea3f1a1c54d9e1ab1766dc678cb951a323743938a73143679ea",
+    "archive": "590abca31475e47f.zip",
+    "zip_bytes": 363697
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_911_gt3_rs/2018_porsche_911_gt3_rs_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_911_gt3_rs\\2018_porsche_911_gt3_rs_a.fbx",
+    "bytes": 2014032,
+    "mesh_references": 67,
+    "key": "99135e8d7a281dcd",
+    "sha256": "c1057061304438d7a3c97f6f9541bcc6d5253441f6acf6621278dbfdeab73236",
+    "archive": "99135e8d7a281dcd.zip",
+    "zip_bytes": 1638910
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_911_gt3_rs/2018_porsche_911_gt3_rs_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_911_gt3_rs\\2018_porsche_911_gt3_rs_int_a.fbx",
+    "bytes": 1574416,
+    "mesh_references": 51,
+    "key": "65545c7de6bb5112",
+    "sha256": "0b9b55b415379e2b931f95fbfbae1d5e29a0825a1722e20b99f3e66f00930bc0",
+    "archive": "65545c7de6bb5112.zip",
+    "zip_bytes": 1320365
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_911_gt3_rs/2018_porsche_911_gt3_rs_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_911_gt3_rs\\2018_porsche_911_gt3_rs_shared.fbx",
+    "bytes": 716720,
+    "mesh_references": 2,
+    "key": "1d97db20c91ff849",
+    "sha256": "693d34926408ef6854c3eb463377afef4cb1a364e892bff28c668dffe6f704bc",
+    "archive": "1d97db20c91ff849.zip",
+    "zip_bytes": 520112
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_911_rsr/2018_porsche_911_rsr_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_911_rsr\\2018_porsche_911_rsr_a.fbx",
+    "bytes": 1808800,
+    "mesh_references": 62,
+    "key": "de322efe20e10463",
+    "sha256": "7bb56d6192317655b9aacd5bde1d16e30f24c676b5f6a54c42de2986cc53c640",
+    "archive": "de322efe20e10463.zip",
+    "zip_bytes": 1459354
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_911_rsr/2018_porsche_911_rsr_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_911_rsr\\2018_porsche_911_rsr_int_a.fbx",
+    "bytes": 1054960,
+    "mesh_references": 46,
+    "key": "99e24c3cab8cfd6a",
+    "sha256": "1f20e24d739d412bbd02041694733ed3c616632add9019d596024d324b7c9f24",
+    "archive": "99e24c3cab8cfd6a.zip",
+    "zip_bytes": 856738
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_911_rsr/2018_porsche_911_rsr_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_911_rsr\\2018_porsche_911_rsr_shared.fbx",
+    "bytes": 592336,
+    "mesh_references": 2,
+    "key": "833da90877a49be8",
+    "sha256": "5617936e534710a8071de55ddfdd40dfa3427f57dfbb5fdf9e88e99fe6159b30",
+    "archive": "833da90877a49be8.zip",
+    "zip_bytes": 397263
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_919_hybrid_evo/2018_porsche_919_hybrid_evo_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_919_hybrid_evo\\2018_porsche_919_hybrid_evo_a.fbx",
+    "bytes": 1298752,
+    "mesh_references": 26,
+    "key": "3d873132610ed92f",
+    "sha256": "de45f0a5abc76d481b7fdc36e6172af6e351e0a0f8b2ed2167cdc055d303a911",
+    "archive": "3d873132610ed92f.zip",
+    "zip_bytes": 1128652
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_919_hybrid_evo/2018_porsche_919_hybrid_evo_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_919_hybrid_evo\\2018_porsche_919_hybrid_evo_int_a.fbx",
+    "bytes": 1212736,
+    "mesh_references": 41,
+    "key": "10d793a13b232c34",
+    "sha256": "2d2352066dc0c26f15218e3ff8cb4650846e37415752b299dbbcfa2454660873",
+    "archive": "10d793a13b232c34.zip",
+    "zip_bytes": 1013155
+  },
+  {
+    "source": "Assets/RealRacing/Source/2018_porsche_919_hybrid_evo/2018_porsche_919_hybrid_evo_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2018_porsche_919_hybrid_evo\\2018_porsche_919_hybrid_evo_shared.fbx",
+    "bytes": 805104,
+    "mesh_references": 3,
+    "key": "dd933d3b3da6a57e",
+    "sha256": "225db3793ec0f4d6c0340e094bed4a2ac2759678e100b01368b20772c51e53b2",
+    "archive": "dd933d3b3da6a57e.zip",
+    "zip_bytes": 575578
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_ferrari_sf90/2019_f1_ferrari_sf90_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_ferrari_sf90\\2019_f1_ferrari_sf90_a.fbx",
+    "bytes": 1544576,
+    "mesh_references": 34,
+    "key": "30358bd20252467f",
+    "sha256": "52608d393a5ba09b93f2e2486c3f3124d54998e80ea2ec5a1e4ae43f8ae86ed1",
+    "archive": "30358bd20252467f.zip",
+    "zip_bytes": 1334478
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_ferrari_sf90/2019_f1_ferrari_sf90_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_ferrari_sf90\\2019_f1_ferrari_sf90_int_a.fbx",
+    "bytes": 1099728,
+    "mesh_references": 33,
+    "key": "409f40687503045b",
+    "sha256": "8e1839643a4e3910838719120b9d30a0fef921b69dd42938703259fdee82891f",
+    "archive": "409f40687503045b.zip",
+    "zip_bytes": 935012
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_ferrari_sf90/2019_f1_ferrari_sf90_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_ferrari_sf90\\2019_f1_ferrari_sf90_shared.fbx",
+    "bytes": 1346336,
+    "mesh_references": 4,
+    "key": "9dea2b3c0a0993e1",
+    "sha256": "1e861efd2020deb2bf6210fae60ae3f6bc3999d9450a6963e38830d09edd7ced",
+    "archive": "9dea2b3c0a0993e1.zip",
+    "zip_bytes": 1119009
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_mclaren_mcl34/2019_f1_mclaren_mcl34_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_mclaren_mcl34\\2019_f1_mclaren_mcl34_a.fbx",
+    "bytes": 1408304,
+    "mesh_references": 39,
+    "key": "b1bc9dd6c459ee65",
+    "sha256": "84eaf65aab293638497f04aebefa511a88ad25e649007b39ea793ab0d479de9c",
+    "archive": "b1bc9dd6c459ee65.zip",
+    "zip_bytes": 1201810
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_mclaren_mcl34/2019_f1_mclaren_mcl34_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_mclaren_mcl34\\2019_f1_mclaren_mcl34_int_a.fbx",
+    "bytes": 996944,
+    "mesh_references": 35,
+    "key": "a1e8c53896ce337b",
+    "sha256": "31499db88699d2a9a225ed8688b98845357ec73f7aa555f33a0cbceee559c304",
+    "archive": "a1e8c53896ce337b.zip",
+    "zip_bytes": 827593
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_mclaren_mcl34/2019_f1_mclaren_mcl34_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_mclaren_mcl34\\2019_f1_mclaren_mcl34_shared.fbx",
+    "bytes": 1092704,
+    "mesh_references": 4,
+    "key": "5610299fe949a3a0",
+    "sha256": "77a20e084bb0531ea47595f43ee4c657d6104836fb2d979e9b0e52b20af6266e",
+    "archive": "5610299fe949a3a0.zip",
+    "zip_bytes": 874467
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_mercedes_w10/2019_f1_mercedes_w10_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_mercedes_w10\\2019_f1_mercedes_w10_a.fbx",
+    "bytes": 1497520,
+    "mesh_references": 41,
+    "key": "49d5d8bbad10b58d",
+    "sha256": "7f5c1c7a9dc2824d2ade815b7f748c254033e038395c23d9c27f87655eb4ea04",
+    "archive": "49d5d8bbad10b58d.zip",
+    "zip_bytes": 1266945
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_mercedes_w10/2019_f1_mercedes_w10_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_mercedes_w10\\2019_f1_mercedes_w10_int_a.fbx",
+    "bytes": 971008,
+    "mesh_references": 33,
+    "key": "28b9e7e6acbef7dc",
+    "sha256": "14663a2c2d7224ec437fee163838bed605b241ae2d444c8c19a84cae4f9c498b",
+    "archive": "28b9e7e6acbef7dc.zip",
+    "zip_bytes": 818805
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_mercedes_w10/2019_f1_mercedes_w10_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_mercedes_w10\\2019_f1_mercedes_w10_shared.fbx",
+    "bytes": 1183632,
+    "mesh_references": 4,
+    "key": "c7ff0a3a7a1ec219",
+    "sha256": "f9c75ef80a711691f4208bf3b0f48b5946ceb7d6dbe764900d44a05d99e53c0a",
+    "archive": "c7ff0a3a7a1ec219.zip",
+    "zip_bytes": 949600
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_red_bull_rb15/2019_f1_red_bull_rb15_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_red_bull_rb15\\2019_f1_red_bull_rb15_a.fbx",
+    "bytes": 1415040,
+    "mesh_references": 39,
+    "key": "cbedd5575a9c1a3e",
+    "sha256": "6ebb7f9f8cbbc4a3373d08b122b5b9a8720b37907bbb11496ac57a6f7fc54ff8",
+    "archive": "cbedd5575a9c1a3e.zip",
+    "zip_bytes": 1206200
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_red_bull_rb15/2019_f1_red_bull_rb15_int_a.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_red_bull_rb15\\2019_f1_red_bull_rb15_int_a.fbx",
+    "bytes": 955216,
+    "mesh_references": 31,
+    "key": "73cf117d8c6b81fa",
+    "sha256": "b11a7c13c0dfc7cbf81a3d988e8027e1e8af62f80d302264d097169220415c86",
+    "archive": "73cf117d8c6b81fa.zip",
+    "zip_bytes": 799759
+  },
+  {
+    "source": "Assets/RealRacing/Source/2019_f1_red_bull_rb15/2019_f1_red_bull_rb15_shared.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\2019_f1_red_bull_rb15\\2019_f1_red_bull_rb15_shared.fbx",
+    "bytes": 1185584,
+    "mesh_references": 4,
+    "key": "3af88acb8a4dc48e",
+    "sha256": "cfebe918745628e726faf290b175bb766d9732ed216ba8c972ad808a7e0abdc7",
+    "archive": "3af88acb8a4dc48e.zip",
+    "zip_bytes": 967649
+  },
+  {
+    "source": "Assets/RealRacing/Source/Brands_Hatch/indy/high/hatch_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Brands_Hatch\\indy\\high\\hatch_variation.fbx",
+    "bytes": 115888,
+    "mesh_references": 4,
+    "key": "68920482a941509c",
+    "sha256": "8fd760bef1ba4722b9fc902b5e1f8207136b7d1f74f3b89be62c17af2585bac4",
+    "archive": "68920482a941509c.zip",
+    "zip_bytes": 83035
+  },
+  {
+    "source": "Assets/RealRacing/Source/Brands_Hatch/processed/high/hatch.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Brands_Hatch\\processed\\high\\hatch.fbx",
+    "bytes": 32656048,
+    "mesh_references": 2860,
+    "key": "b9cb6c987a317aed",
+    "sha256": "bfcbd20fe1eae3829e02d232633a8b02551cf5a107d277322e27aedca85a9690",
+    "archive": "b9cb6c987a317aed.zip",
+    "zip_bytes": 13355294
+  },
+  {
+    "source": "Assets/RealRacing/Source/Circuit_de_Catalunya/club/high/catalunya_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Circuit_de_Catalunya\\club\\high\\catalunya_variation.fbx",
+    "bytes": 340672,
+    "mesh_references": 21,
+    "key": "64c27ed3a69de8d9",
+    "sha256": "c398232cc91c043040b1369b30640b4e19e6aa0f80de960bff9d1c4311659699",
+    "archive": "64c27ed3a69de8d9.zip",
+    "zip_bytes": 202883
+  },
+  {
+    "source": "Assets/RealRacing/Source/Circuit_de_Catalunya/gp/high/catalunya_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Circuit_de_Catalunya\\gp\\high\\catalunya_variation.fbx",
+    "bytes": 608432,
+    "mesh_references": 36,
+    "key": "f3e79af42cbfacf2",
+    "sha256": "2f124712a4ae020797c420ab623a293c2bb92f46d04e664a1de684e21c7137f0",
+    "archive": "f3e79af42cbfacf2.zip",
+    "zip_bytes": 391742
+  },
+  {
+    "source": "Assets/RealRacing/Source/Circuit_de_Catalunya/national/high/catalunya_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Circuit_de_Catalunya\\national\\high\\catalunya_variation.fbx",
+    "bytes": 576992,
+    "mesh_references": 35,
+    "key": "7d6c2450c4f26282",
+    "sha256": "1cf244d99301f57c04b57a8d6a32df577466735145ab14032cae7fb310da4dea",
+    "archive": "7d6c2450c4f26282.zip",
+    "zip_bytes": 352906
+  },
+  {
+    "source": "Assets/RealRacing/Source/Circuit_de_Catalunya/processed/high/catalunya.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Circuit_de_Catalunya\\processed\\high\\catalunya.fbx",
+    "bytes": 46205760,
+    "mesh_references": 3645,
+    "key": "31bbd147a31970c1",
+    "sha256": "38e789b63998a585513c2262a294a3234686d2c5f8ebe666abefc286cdf32503",
+    "archive": "31bbd147a31970c1.zip",
+    "zip_bytes": 20887552
+  },
+  {
+    "source": "Assets/RealRacing/Source/Daytona/motogp/high/daytona_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Daytona\\motogp\\high\\daytona_variation.fbx",
+    "bytes": 1725968,
+    "mesh_references": 105,
+    "key": "052f08580e003903",
+    "sha256": "a2344a6a8f5b039a7f6dfe4eb79352dd102b2e5616202e579f48733e3ff20d66",
+    "archive": "052f08580e003903.zip",
+    "zip_bytes": 1102911
+  },
+  {
+    "source": "Assets/RealRacing/Source/Daytona/processed/high/daytona.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Daytona\\processed\\high\\daytona.fbx",
+    "bytes": 42005952,
+    "mesh_references": 3363,
+    "key": "170d924e5fbac44d",
+    "sha256": "3c8cd9d56681d53786468be3d334d4ac294035efffc92a30646ef621f6f8c716",
+    "archive": "170d924e5fbac44d.zip",
+    "zip_bytes": 23197946
+  },
+  {
+    "source": "Assets/RealRacing/Source/Daytona/roadcourse/high/daytona_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Daytona\\roadcourse\\high\\daytona_variation.fbx",
+    "bytes": 1131680,
+    "mesh_references": 69,
+    "key": "c77ad42eb18995c9",
+    "sha256": "bb598a180699684841b54ed264473557e0a26cd22901ecb8bb5d7e528f0454dc",
+    "archive": "c77ad42eb18995c9.zip",
+    "zip_bytes": 727704
+  },
+  {
+    "source": "Assets/RealRacing/Source/Daytona/speedway/high/daytona_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Daytona\\speedway\\high\\daytona_variation.fbx",
+    "bytes": 132896,
+    "mesh_references": 5,
+    "key": "38699f597651baea",
+    "sha256": "68437740a60022e75b8a42016521efdb74b4e940f7e1eada4fe47e28720280f9",
+    "archive": "38699f597651baea.zip",
+    "zip_bytes": 88682
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/club/high/dubai_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\club\\high\\dubai_variation.fbx",
+    "bytes": 340144,
+    "mesh_references": 20,
+    "key": "e3ae57be3afe45bb",
+    "sha256": "8aca5bde65a4f96957f4feef6771b06cf2bbfe63d4df02c8bf740292a4328491",
+    "archive": "e3ae57be3afe45bb.zip",
+    "zip_bytes": 211057
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/gp/high/dubai_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\gp\\high\\dubai_variation.fbx",
+    "bytes": 601104,
+    "mesh_references": 28,
+    "key": "5b9c41621dae49dd",
+    "sha256": "4b87db08ee401812c64d3c54f7b92081b74f7311e5e0ad0ee60fd66099543ba9",
+    "archive": "5b9c41621dae49dd.zip",
+    "zip_bytes": 428882
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/hill/high/dubai_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\hill\\high\\dubai_variation.fbx",
+    "bytes": 280208,
+    "mesh_references": 14,
+    "key": "bfce14c476787207",
+    "sha256": "1f74cd06f51afff903d7772b8184e4e89f3a44c778e1e647f108d133cee062a1",
+    "archive": "bfce14c476787207.zip",
+    "zip_bytes": 189814
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/international/high/dubai_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\international\\high\\dubai_variation.fbx",
+    "bytes": 422096,
+    "mesh_references": 22,
+    "key": "5968cb109cacde5b",
+    "sha256": "91e2a517332537a1909d4b928f8b20e850c0320efd4841b569fa95bc045a8944",
+    "archive": "5968cb109cacde5b.zip",
+    "zip_bytes": 281860
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/national/high/dubai_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\national\\high\\dubai_variation.fbx",
+    "bytes": 519168,
+    "mesh_references": 26,
+    "key": "bb21368ba1e92788",
+    "sha256": "25eef0ec09ae9245f023e6a73307ed85d02d80ee3d3cfa29092a1eaafc4c527c",
+    "archive": "bb21368ba1e92788.zip",
+    "zip_bytes": 358279
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/oval/high/dubai_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\oval\\high\\dubai_variation.fbx",
+    "bytes": 267488,
+    "mesh_references": 9,
+    "key": "fef65836f5b38544",
+    "sha256": "dbc1ddcf63d8e97de0451a7d132190a0543d49b7cf583ef69a8ed155cc9e5433",
+    "archive": "fef65836f5b38544.zip",
+    "zip_bytes": 205712
+  },
+  {
+    "source": "Assets/RealRacing/Source/Dubai_Autodrome/processed/high/dubai.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Dubai_Autodrome\\processed\\high\\dubai.fbx",
+    "bytes": 37323744,
+    "mesh_references": 3414,
+    "key": "ad9f8be159bbfa47",
+    "sha256": "d193be9b4c4e39485249d15c773fe216f11cbe081b9a99100b7b5e915af9667c",
+    "archive": "ad9f8be159bbfa47.zip",
+    "zip_bytes": 14443857
+  },
+  {
+    "source": "Assets/RealRacing/Source/Hockenheim/gp/high/hockenheim_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Hockenheim\\gp\\high\\hockenheim_variation.fbx",
+    "bytes": 759424,
+    "mesh_references": 39,
+    "key": "318481b7dc0378b8",
+    "sha256": "1eb65aeabefcd90c69fb2839dc0e8d6fa330be247d0b3f5a022ee1864483f207",
+    "archive": "318481b7dc0378b8.zip",
+    "zip_bytes": 505934
+  },
+  {
+    "source": "Assets/RealRacing/Source/Hockenheim/national/high/hockenheim_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Hockenheim\\national\\high\\hockenheim_variation.fbx",
+    "bytes": 699152,
+    "mesh_references": 39,
+    "key": "baabd8869f09b8e8",
+    "sha256": "c78bc3ac086ee81ca5db520ba5a8e6abdbde751d8f740928c9162806cf3a3022",
+    "archive": "baabd8869f09b8e8.zip",
+    "zip_bytes": 442025
+  },
+  {
+    "source": "Assets/RealRacing/Source/Hockenheim/processed/high/hockenheim.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Hockenheim\\processed\\high\\hockenheim.fbx",
+    "bytes": 40951872,
+    "mesh_references": 3392,
+    "key": "bc7119682e5b3d71",
+    "sha256": "1b5f3303b9649f548b1d678615410b0fa9994e5845768707a629f641bb8cc086",
+    "archive": "bc7119682e5b3d71.zip",
+    "zip_bytes": 17524051
+  },
+  {
+    "source": "Assets/RealRacing/Source/Hockenheim/short/high/hockenheim_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Hockenheim\\short\\high\\hockenheim_variation.fbx",
+    "bytes": 206800,
+    "mesh_references": 18,
+    "key": "5f50deaef8235d03",
+    "sha256": "769cb777a6891e864e09ecc179e52a8caf37707e508dbfd665ca044a5eeb0a26",
+    "archive": "5f50deaef8235d03.zip",
+    "zip_bytes": 82468
+  },
+  {
+    "source": "Assets/RealRacing/Source/Hongkong/circuit/high/hongkong_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Hongkong\\circuit\\high\\hongkong_variation.fbx",
+    "bytes": 24144,
+    "mesh_references": 1,
+    "key": "2f091d1b9352e9b3",
+    "sha256": "c3de93944b0d6467ccccb9facea536cb92fc027f75b87d309a98b6d297741ed5",
+    "archive": "2f091d1b9352e9b3.zip",
+    "zip_bytes": 6798
+  },
+  {
+    "source": "Assets/RealRacing/Source/Hongkong/processed/high/hongkong.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Hongkong\\processed\\high\\hongkong.fbx",
+    "bytes": 21971616,
+    "mesh_references": 1415,
+    "key": "9f8d03c890f2d204",
+    "sha256": "9b566f2837350039665a9764671c8fc6ded83bc6793743a8ac672f255b19da77",
+    "archive": "9f8d03c890f2d204.zip",
+    "zip_bytes": 12299806
+  },
+  {
+    "source": "Assets/RealRacing/Source/Indianapolis/processed/high/indianapolis.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Indianapolis\\processed\\high\\indianapolis.fbx",
+    "bytes": 26140208,
+    "mesh_references": 2322,
+    "key": "bd9ae6a4feeef9cb",
+    "sha256": "0a712f92007785a76c62275724ddbbe877c986f33b0118fe403272a43bf37d22",
+    "archive": "bd9ae6a4feeef9cb.zip",
+    "zip_bytes": 10905223
+  },
+  {
+    "source": "Assets/RealRacing/Source/Indianapolis/roadcourse/high/indianapolis_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Indianapolis\\roadcourse\\high\\indianapolis_variation.fbx",
+    "bytes": 418624,
+    "mesh_references": 36,
+    "key": "29ba679fe2675df6",
+    "sha256": "2fed904e993041b2110278dfacea5312b1cafabf92017bd70097bcfb4b23b528",
+    "archive": "29ba679fe2675df6.zip",
+    "zip_bytes": 196556
+  },
+  {
+    "source": "Assets/RealRacing/Source/Indianapolis/speedway/high/indianapolis_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Indianapolis\\speedway\\high\\indianapolis_variation.fbx",
+    "bytes": 312016,
+    "mesh_references": 29,
+    "key": "5d832dfadaa30670",
+    "sha256": "23d5a045155ad39c058be5982ae77130969db86e581b79813856cb78bc955c02",
+    "archive": "5d832dfadaa30670.zip",
+    "zip_bytes": 136315
+  },
+  {
+    "source": "Assets/RealRacing/Source/Laguna_Seca/processed/high/seca.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Laguna_Seca\\processed\\high\\seca.fbx",
+    "bytes": 31087248,
+    "mesh_references": 2777,
+    "key": "c6cbd1e8704e0b91",
+    "sha256": "06fdd8a6d522c22d0951024067cf86ff0025c6ad55f61cbc9df41427c013b926",
+    "archive": "c6cbd1e8704e0b91.zip",
+    "zip_bytes": 13320630
+  },
+  {
+    "source": "Assets/RealRacing/Source/Leipzig/dynamischkurs/high/leipzig_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Leipzig\\dynamischkurs\\high\\leipzig_variation.fbx",
+    "bytes": 1577408,
+    "mesh_references": 118,
+    "key": "6177f9f1f5eb82a3",
+    "sha256": "670ede49568429eb969ccd0711be2ba805db73447e70d126c9e8ec0e096362b8",
+    "archive": "6177f9f1f5eb82a3.zip",
+    "zip_bytes": 933171
+  },
+  {
+    "source": "Assets/RealRacing/Source/Leipzig/groberkurs/high/leipzig_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Leipzig\\groberkurs\\high\\leipzig_variation.fbx",
+    "bytes": 1181808,
+    "mesh_references": 86,
+    "key": "942fd28be51aa743",
+    "sha256": "61a955d0a6e2dc8a5ca8ff8dac1c6ec70e2b0707885bc15bce177ce22b337363",
+    "archive": "942fd28be51aa743.zip",
+    "zip_bytes": 683497
+  },
+  {
+    "source": "Assets/RealRacing/Source/Leipzig/kleinerkurs/high/leipzig_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Leipzig\\kleinerkurs\\high\\leipzig_variation.fbx",
+    "bytes": 1210976,
+    "mesh_references": 92,
+    "key": "8a57ed7ec8d107c6",
+    "sha256": "304d0dc1099e5a8ff50a1fef3d49dedfe6662540269ea70e74a600b9517f1a6b",
+    "archive": "8a57ed7ec8d107c6.zip",
+    "zip_bytes": 680630
+  },
+  {
+    "source": "Assets/RealRacing/Source/Leipzig/processed/high/leipzig.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Leipzig\\processed\\high\\leipzig.fbx",
+    "bytes": 29634384,
+    "mesh_references": 2890,
+    "key": "9a77420f533f0b9e",
+    "sha256": "5f7d34584e758dee9c00fbddc4ed7e635e62ad9cbbb26a590db6d56f7be97a6a",
+    "archive": "9a77420f533f0b9e.zip",
+    "zip_bytes": 11822648
+  },
+  {
+    "source": "Assets/RealRacing/Source/Melbourne/circuit/high/melbourne_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Melbourne\\circuit\\high\\melbourne_variation.fbx",
+    "bytes": 50288,
+    "mesh_references": 2,
+    "key": "38cde28ef2b943ba",
+    "sha256": "5ed8076568e12bab8c4c8695e2c7f074c1d09aed57212195f6d0d3e6b1caab26",
+    "archive": "38cde28ef2b943ba.zip",
+    "zip_bytes": 21618
+  },
+  {
+    "source": "Assets/RealRacing/Source/Melbourne/processed/high/melbourne.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Melbourne\\processed\\high\\melbourne.fbx",
+    "bytes": 42693136,
+    "mesh_references": 4039,
+    "key": "1eac55699dd4d623",
+    "sha256": "2fa580b69b8fb88ffe1ddc4db06323bdb0e4318b671ce6292b440534e9e830a0",
+    "archive": "1eac55699dd4d623.zip",
+    "zip_bytes": 14782629
+  },
+  {
+    "source": "Assets/RealRacing/Source/Monza/circuit/high/monza_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Monza\\circuit\\high\\monza_variation.fbx",
+    "bytes": 557008,
+    "mesh_references": 26,
+    "key": "2bdf4e09af2950c2",
+    "sha256": "16cce81826a936d0610f4647442015349038b956b969282a652f73d21690b846",
+    "archive": "2bdf4e09af2950c2.zip",
+    "zip_bytes": 387960
+  },
+  {
+    "source": "Assets/RealRacing/Source/Monza/jnr/high/monza_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Monza\\jnr\\high\\monza_variation.fbx",
+    "bytes": 479088,
+    "mesh_references": 23,
+    "key": "ebbc0965d372f5d3",
+    "sha256": "3f82bf03105d595eed8598a1c990a66fe8078df2b429ad36c92a06fbf22329ea",
+    "archive": "ebbc0965d372f5d3.zip",
+    "zip_bytes": 334358
+  },
+  {
+    "source": "Assets/RealRacing/Source/Monza/processed/high/monza.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Monza\\processed\\high\\monza.fbx",
+    "bytes": 52879968,
+    "mesh_references": 4128,
+    "key": "85d4a557e6dac510",
+    "sha256": "150dd1906c81b7b0ee4effff38ec4a22475e5521383240dcd7ddecbe351e56cb",
+    "archive": "85d4a557e6dac510.zip",
+    "zip_bytes": 24663033
+  },
+  {
+    "source": "Assets/RealRacing/Source/NewYork/processed/high/newyork.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\NewYork\\processed\\high\\newyork.fbx",
+    "bytes": 23080976,
+    "mesh_references": 1333,
+    "key": "6fb100be51260fc6",
+    "sha256": "20ec240775fe3c8e34e2bdb8dae19849f71d40f540f03a88eaaa2629f535175f",
+    "archive": "6fb100be51260fc6.zip",
+    "zip_bytes": 13264439
+  },
+  {
+    "source": "Assets/RealRacing/Source/NewYork2021/processed/high/newyork2021.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\NewYork2021\\processed\\high\\newyork2021.fbx",
+    "bytes": 24893056,
+    "mesh_references": 1425,
+    "key": "11ccda56a3107331",
+    "sha256": "b33602e92e1c54879476e180ef6b027a3596e90597cf57aa2c61b7da8e6d90f5",
+    "archive": "11ccda56a3107331.zip",
+    "zip_bytes": 14538089
+  },
+  {
+    "source": "Assets/RealRacing/Source/Nuerburgring/gp/high/nuerburgring_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Nuerburgring\\gp\\high\\nuerburgring_variation.fbx",
+    "bytes": 864912,
+    "mesh_references": 47,
+    "key": "f666493758a7fe12",
+    "sha256": "bf168f95fc307854b5b1928f6ea3fbe543eec2c6c32d9326db84071aea0a21d5",
+    "archive": "f666493758a7fe12.zip",
+    "zip_bytes": 570407
+  },
+  {
+    "source": "Assets/RealRacing/Source/Nuerburgring/mullenbach/high/nuerburgring_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Nuerburgring\\mullenbach\\high\\nuerburgring_variation.fbx",
+    "bytes": 443552,
+    "mesh_references": 24,
+    "key": "07d2962bd8f1fa98",
+    "sha256": "ff177118e99cf77fbc7061b22c272efdb3b48ec1002a9df8a69cc1a2e74e6e46",
+    "archive": "07d2962bd8f1fa98.zip",
+    "zip_bytes": 293982
+  },
+  {
+    "source": "Assets/RealRacing/Source/Nuerburgring/processed/high/nuerburgring.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Nuerburgring\\processed\\high\\nuerburgring.fbx",
+    "bytes": 44909248,
+    "mesh_references": 3747,
+    "key": "0f3e8ef860e24e2e",
+    "sha256": "774425545baf2250a04f8faa719a4984eb68296fe0f6ec5dc8a5355243865fa6",
+    "archive": "0f3e8ef860e24e2e.zip",
+    "zip_bytes": 19743579
+  },
+  {
+    "source": "Assets/RealRacing/Source/Nuerburgring/sprint/high/nuerburgring_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Nuerburgring\\sprint\\high\\nuerburgring_variation.fbx",
+    "bytes": 680224,
+    "mesh_references": 45,
+    "key": "192f7fc31cdcad60",
+    "sha256": "ba5a26c0cdbc699ce3034e325fb988adfc881006fdf87a701ee92ea4af042081",
+    "archive": "192f7fc31cdcad60.zip",
+    "zip_bytes": 396692
+  },
+  {
+    "source": "Assets/RealRacing/Source/Richmond/processed/high/richmond.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Richmond\\processed\\high\\richmond.fbx",
+    "bytes": 19128576,
+    "mesh_references": 1388,
+    "key": "df59993da1d72579",
+    "sha256": "0246467da5c8ea3f2f7cbfbdc92e6b58b485654921238cb10167a3f1645af372",
+    "archive": "df59993da1d72579.zip",
+    "zip_bytes": 10815970
+  },
+  {
+    "source": "Assets/RealRacing/Source/Silverstone/bridge/high/silverstone_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Silverstone\\bridge\\high\\silverstone_variation.fbx",
+    "bytes": 950864,
+    "mesh_references": 50,
+    "key": "b251228493ae2477",
+    "sha256": "249d5bcef0accf559145d8b887d53baef80b954dcf9841b4f42ce6ab3d6ec9d8",
+    "archive": "b251228493ae2477.zip",
+    "zip_bytes": 647514
+  },
+  {
+    "source": "Assets/RealRacing/Source/Silverstone/gp/high/silverstone_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Silverstone\\gp\\high\\silverstone_variation.fbx",
+    "bytes": 1709264,
+    "mesh_references": 91,
+    "key": "36d5ed783b5552c0",
+    "sha256": "abc5bb037024cef84f69814317fada000a65087cad6227e4d69182dcdec965d0",
+    "archive": "36d5ed783b5552c0.zip",
+    "zip_bytes": 1141445
+  },
+  {
+    "source": "Assets/RealRacing/Source/Silverstone/national/high/silverstone_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Silverstone\\national\\high\\silverstone_variation.fbx",
+    "bytes": 414112,
+    "mesh_references": 15,
+    "key": "1ca7a7f29ae946d4",
+    "sha256": "ae5c170d4794f0306971066d7aea125a19e6a7f58e1c33fc1936da7fe944b976",
+    "archive": "1ca7a7f29ae946d4.zip",
+    "zip_bytes": 302113
+  },
+  {
+    "source": "Assets/RealRacing/Source/Silverstone/processed/high/silverstone.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Silverstone\\processed\\high\\silverstone.fbx",
+    "bytes": 45065424,
+    "mesh_references": 3648,
+    "key": "e42c3781de95c8ec",
+    "sha256": "0c0708d201141e1e6689ef17fac673c8fb2dbec431f2c9e4c6b532b4b4fc39da",
+    "archive": "e42c3781de95c8ec.zip",
+    "zip_bytes": 21576466
+  },
+  {
+    "source": "Assets/RealRacing/Source/Silverstone/southern/high/silverstone_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Silverstone\\southern\\high\\silverstone_variation.fbx",
+    "bytes": 490496,
+    "mesh_references": 28,
+    "key": "ff89d3f4748c4565",
+    "sha256": "a23711eacf08784c7d99be33f8bd9f1656c5572bf8da7ae939af9ad2cfea1a56",
+    "archive": "ff89d3f4748c4565.zip",
+    "zip_bytes": 312112
+  },
+  {
+    "source": "Assets/RealRacing/Source/Suzuka/east/high/suzuka_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Suzuka\\east\\high\\suzuka_variation.fbx",
+    "bytes": 239616,
+    "mesh_references": 16,
+    "key": "cbb6275bb47dfb66",
+    "sha256": "352b239a283b21df1793035b2b2f98b7fd309c30c052f97c4606af9038b5b2d9",
+    "archive": "cbb6275bb47dfb66.zip",
+    "zip_bytes": 129052
+  },
+  {
+    "source": "Assets/RealRacing/Source/Suzuka/gp/high/suzuka_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Suzuka\\gp\\high\\suzuka_variation.fbx",
+    "bytes": 588688,
+    "mesh_references": 51,
+    "key": "b3472309caafcf9d",
+    "sha256": "4645308597df08f168a427f6e22f8b1df7e52ffe23e61136d476ad806fffaa9d",
+    "archive": "b3472309caafcf9d.zip",
+    "zip_bytes": 238798
+  },
+  {
+    "source": "Assets/RealRacing/Source/Suzuka/processed/high/suzuka.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Suzuka\\processed\\high\\suzuka.fbx",
+    "bytes": 43562976,
+    "mesh_references": 3757,
+    "key": "bada1868af89555e",
+    "sha256": "f3df30c7d9a9887ab0994d8d01a4e29fe1db124e5dfd00ba277d6dcff2a8e4f8",
+    "archive": "bada1868af89555e.zip",
+    "zip_bytes": 19638681
+  },
+  {
+    "source": "Assets/RealRacing/Source/Suzuka/west/high/suzuka_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\Suzuka\\west\\high\\suzuka_variation.fbx",
+    "bytes": 127616,
+    "mesh_references": 12,
+    "key": "7fea92f2bb6a9cb2",
+    "sha256": "9803a412bdde6d50959c96952a520e818441379905fb3efde990e565ef7733f6",
+    "archive": "7fea92f2bb6a9cb2.zip",
+    "zip_bytes": 38904
+  },
+  {
+    "source": "Assets/RealRacing/Source/YasMarina/gp/high/yasmarina_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\YasMarina\\gp\\high\\yasmarina_variation.fbx",
+    "bytes": 44016,
+    "mesh_references": 1,
+    "key": "732b27beb8dc8e50",
+    "sha256": "645836ef0806e13a0b33dcefc048f34eab88754bff2cc39df09f493dcc45a834",
+    "archive": "732b27beb8dc8e50.zip",
+    "zip_bytes": 28467
+  },
+  {
+    "source": "Assets/RealRacing/Source/YasMarina/processed/high/yasmarina.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\YasMarina\\processed\\high\\yasmarina.fbx",
+    "bytes": 54031728,
+    "mesh_references": 5210,
+    "key": "c365e26c56a298a0",
+    "sha256": "c3697a22a9481d132e4d22c7b45e12bee313dc8df3a2c8c0b7e5de16ab43a264",
+    "archive": "c365e26c56a298a0.zip",
+    "zip_bytes": 24540192
+  },
+  {
+    "source": "Assets/RealRacing/Source/YasMarina/tute/high/yasmarina_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\YasMarina\\tute\\high\\yasmarina_variation.fbx",
+    "bytes": 44032,
+    "mesh_references": 1,
+    "key": "ec4af176fda293f0",
+    "sha256": "2285c4ed5c6b513030b5f11363f668f166e5a6e4119445c24da3b2dce36842a3",
+    "archive": "ec4af176fda293f0.zip",
+    "zip_bytes": 28461
+  },
+  {
+    "source": "Assets/RealRacing/Source/brazil/circuit/high/brazil_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\brazil\\circuit\\high\\brazil_variation.fbx",
+    "bytes": 34800,
+    "mesh_references": 2,
+    "key": "58765694395b177a",
+    "sha256": "6bc2a720d75f0005d2c22350e1bd475a2aaa18c872624ca7038a70d5b29be527",
+    "archive": "58765694395b177a.zip",
+    "zip_bytes": 13615
+  },
+  {
+    "source": "Assets/RealRacing/Source/brazil/processed/high/brazil.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\brazil\\processed\\high\\brazil.fbx",
+    "bytes": 39722496,
+    "mesh_references": 2747,
+    "key": "8272deabb2f2f265",
+    "sha256": "f1a9a88baca032da235c15fa188c599cfabcb2f95a98a88838cb24a5182c9418",
+    "archive": "8272deabb2f2f265.zip",
+    "zip_bytes": 20399683
+  },
+  {
+    "source": "Assets/RealRacing/Source/cota/club/high/cota_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\cota\\club\\high\\cota_variation.fbx",
+    "bytes": 464576,
+    "mesh_references": 26,
+    "key": "33e30afd8ff265ba",
+    "sha256": "782125e3b7d19003b9e806e1e9538c93f551313fd6119c4e9defe65914605013",
+    "archive": "33e30afd8ff265ba.zip",
+    "zip_bytes": 303219
+  },
+  {
+    "source": "Assets/RealRacing/Source/cota/gp/high/cota_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\cota\\gp\\high\\cota_variation.fbx",
+    "bytes": 858640,
+    "mesh_references": 49,
+    "key": "a7e4e2d4d73c8e70",
+    "sha256": "96d0dcdb761b963b6b246142ff3715ad98ec7ccd99552094f1e466bd1447dc56",
+    "archive": "a7e4e2d4d73c8e70.zip",
+    "zip_bytes": 571819
+  },
+  {
+    "source": "Assets/RealRacing/Source/cota/processed/high/cota.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\cota\\processed\\high\\cota.fbx",
+    "bytes": 23201632,
+    "mesh_references": 1844,
+    "key": "25a8f06d8a823d6d",
+    "sha256": "0ab54219cc70cb66015e7869b64d6b63b526a9dd8d5af86ee50b40442ef827b5",
+    "archive": "25a8f06d8a823d6d.zip",
+    "zip_bytes": 11297161
+  },
+  {
+    "source": "Assets/RealRacing/Source/cota/short/high/cota_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\cota\\short\\high\\cota_variation.fbx",
+    "bytes": 667072,
+    "mesh_references": 35,
+    "key": "59b99f9a095703dd",
+    "sha256": "52d845b396e828f16a0811aa2f3c1917a952ea5028ff8d98ef7fb29d1d587c84",
+    "archive": "59b99f9a095703dd.zip",
+    "zip_bytes": 456643
+  },
+  {
+    "source": "Assets/RealRacing/Source/lemans/circuit/high/lemans_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\lemans\\circuit\\high\\lemans_variation.fbx",
+    "bytes": 520928,
+    "mesh_references": 24,
+    "key": "ec3e343afe89dc60",
+    "sha256": "1bf4d6c21f9560b2afbabba2a70570f5bcef171aa548264ba071f68de1817dd7",
+    "archive": "ec3e343afe89dc60.zip",
+    "zip_bytes": 361599
+  },
+  {
+    "source": "Assets/RealRacing/Source/lemans/processed/high/lemans.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\lemans\\processed\\high\\lemans.fbx",
+    "bytes": 137784624,
+    "mesh_references": 12111,
+    "key": "cd35829b983da3eb",
+    "sha256": "754abffa947d672e44980a390c1403e6b3cf56d00f0e26984c643c5aaab43370",
+    "archive": "cd35829b983da3eb.zip",
+    "zip_bytes": 53252875
+  },
+  {
+    "source": "Assets/RealRacing/Source/lemans/sarthe/high/lemans_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\lemans\\sarthe\\high\\lemans_variation.fbx",
+    "bytes": 527200,
+    "mesh_references": 32,
+    "key": "ee5fa69eab2656e7",
+    "sha256": "38235a47480149f8892c30035fc2cf643d6fe79610121bbc9bdb70b54ed6545a",
+    "archive": "ee5fa69eab2656e7.zip",
+    "zip_bytes": 326325
+  },
+  {
+    "source": "Assets/RealRacing/Source/limerock/circuit/high/limerock_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\limerock\\circuit\\high\\limerock_variation.fbx",
+    "bytes": 167936,
+    "mesh_references": 9,
+    "key": "fa881117af5beb71",
+    "sha256": "2e5d6f8481047a9078c2bc85701b860b7a84c91d433af7ffe8d5e67d1ca9ef38",
+    "archive": "fa881117af5beb71.zip",
+    "zip_bytes": 102281
+  },
+  {
+    "source": "Assets/RealRacing/Source/limerock/processed/high/limerock.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\limerock\\processed\\high\\limerock.fbx",
+    "bytes": 21071840,
+    "mesh_references": 1705,
+    "key": "1394d93fcd023032",
+    "sha256": "afb3aec8d481d91a07c1513bd0f397995a14de21e7a90c19cc12f42016f79333",
+    "archive": "1394d93fcd023032.zip",
+    "zip_bytes": 10055897
+  },
+  {
+    "source": "Assets/RealRacing/Source/limerock/south/high/limerock_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\limerock\\south\\high\\limerock_variation.fbx",
+    "bytes": 172112,
+    "mesh_references": 9,
+    "key": "7417b7f14704ca7f",
+    "sha256": "226693ad2fa95f67a87a67f3b0887068c26b9c2aabe9a8b41945350f6cec6c2b",
+    "archive": "7417b7f14704ca7f.zip",
+    "zip_bytes": 103387
+  },
+  {
+    "source": "Assets/RealRacing/Source/limerock/west/high/limerock_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\limerock\\west\\high\\limerock_variation.fbx",
+    "bytes": 196048,
+    "mesh_references": 11,
+    "key": "bd06e1f88a95ac26",
+    "sha256": "6cb2489400942860f73b8c70a585074a3c465bee2d61bc9ec773a0b99a09b4d4",
+    "archive": "bd06e1f88a95ac26.zip",
+    "zip_bytes": 120040
+  },
+  {
+    "source": "Assets/RealRacing/Source/monaco/processed/high/monaco.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\monaco\\processed\\high\\monaco.fbx",
+    "bytes": 30958576,
+    "mesh_references": 2207,
+    "key": "eed4b086ce304f06",
+    "sha256": "93180edd5efd0f123797412e6c672ea788512645ce9e940ec45b703e7383b578",
+    "archive": "eed4b086ce304f06.zip",
+    "zip_bytes": 16627472
+  },
+  {
+    "source": "Assets/RealRacing/Source/r3Berlin/processed/high/r3berlin.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\r3Berlin\\processed\\high\\r3berlin.fbx",
+    "bytes": 16083616,
+    "mesh_references": 1106,
+    "key": "1690568860f04745",
+    "sha256": "cdf3645c2b715bf850c7fa1ed134fb30852b417cfb18376b60e8e27e965c15d7",
+    "archive": "1690568860f04745.zip",
+    "zip_bytes": 8180148
+  },
+  {
+    "source": "Assets/RealRacing/Source/redbull/gp/high/redbull_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\redbull\\gp\\high\\redbull_variation.fbx",
+    "bytes": 335856,
+    "mesh_references": 27,
+    "key": "6ca000d099d75656",
+    "sha256": "8ae776a46477d69969ad71446d116119bc45015362295adb047d6935d33e7ca6",
+    "archive": "6ca000d099d75656.zip",
+    "zip_bytes": 169155
+  },
+  {
+    "source": "Assets/RealRacing/Source/redbull/processed/high/redbull.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\redbull\\processed\\high\\redbull.fbx",
+    "bytes": 33858448,
+    "mesh_references": 2519,
+    "key": "db8d92dae88abe36",
+    "sha256": "c796420442e9271947fcd7af57f8b743e46c9514777ab1de445c9a1a083cbbe8",
+    "archive": "db8d92dae88abe36.zip",
+    "zip_bytes": 16417000
+  },
+  {
+    "source": "Assets/RealRacing/Source/redbull/south/high/redbull_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\redbull\\south\\high\\redbull_variation.fbx",
+    "bytes": 579856,
+    "mesh_references": 39,
+    "key": "64b39e2274e417fc",
+    "sha256": "6da71d9d0c1ed8d6b8501d3d6d44c3b1492c47d287b11b8c9082f5cb0699ea45",
+    "archive": "64b39e2274e417fc.zip",
+    "zip_bytes": 338881
+  },
+  {
+    "source": "Assets/RealRacing/Source/sebring/circuit/high/sebring_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\sebring\\circuit\\high\\sebring_variation.fbx",
+    "bytes": 389632,
+    "mesh_references": 22,
+    "key": "cb74719754eab93a",
+    "sha256": "c15f52f151e6c0ae8e2c77a440f6e5c2ef0f4bdac9df23cdca68d979159b303e",
+    "archive": "cb74719754eab93a.zip",
+    "zip_bytes": 229225
+  },
+  {
+    "source": "Assets/RealRacing/Source/sebring/johnson/high/sebring_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\sebring\\johnson\\high\\sebring_variation.fbx",
+    "bytes": 174720,
+    "mesh_references": 10,
+    "key": "9ebe7f2f1c231480",
+    "sha256": "a5a5c00ddbbf4d5fcd34dbca47cbf5f2070a82424d65c3750bc451a6332fb53e",
+    "archive": "9ebe7f2f1c231480.zip",
+    "zip_bytes": 106517
+  },
+  {
+    "source": "Assets/RealRacing/Source/sebring/processed/high/sebring.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\sebring\\processed\\high\\sebring.fbx",
+    "bytes": 47902832,
+    "mesh_references": 2765,
+    "key": "aa9b6ee98f386050",
+    "sha256": "94a573bdd12d93246ca50234f393e37e3e0a018240d44c3cc79cd642fd88db89",
+    "archive": "aa9b6ee98f386050.zip",
+    "zip_bytes": 25543696
+  },
+  {
+    "source": "Assets/RealRacing/Source/sebring/school/high/sebring_variation.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\sebring\\school\\high\\sebring_variation.fbx",
+    "bytes": 372096,
+    "mesh_references": 20,
+    "key": "9232b123013c6ae2",
+    "sha256": "4ba3539a7712cf93e673919c6b92b6cdde67e0b22c0e51d9c88aafc9110a1212",
+    "archive": "9232b123013c6ae2.zip",
+    "zip_bytes": 256051
+  },
+  {
+    "source": "Assets/RealRacing/Source/singapore/processed/high/singapore.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\singapore\\processed\\high\\singapore.fbx",
+    "bytes": 46329952,
+    "mesh_references": 2767,
+    "key": "6aa3debb19ac13d1",
+    "sha256": "6d25b8ff296e21a5fc9c6683a2375eec0992fe076469093aee791daa44d3cc8a",
+    "archive": "6aa3debb19ac13d1.zip",
+    "zip_bytes": 28016528
+  },
+  {
+    "source": "Assets/RealRacing/Source/spa/processed/high/spa.fbx",
+    "path": "D:\\MySim-recovered\\full-game-build\\project\\Assets\\RealRacing\\Source\\spa\\processed\\high\\spa.fbx",
+    "bytes": 53196544,
+    "mesh_references": 4821,
+    "key": "11513cd1036df6c9",
+    "sha256": "c1428a5e6cf0dbfbe0171edb9d3761f5ef5d617c9dcc993ebc3ee3c930d3fec9",
+    "archive": "11513cd1036df6c9.zip",
+    "zip_bytes": 21533807
+  }
+]
