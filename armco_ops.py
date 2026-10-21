@@ -5,7 +5,7 @@ def armco_geometry(obj):
  # Source-sized procedural Armco candidate. It still requires visual/context acceptance.
  old=obj.data;co=[v.co.copy() for v in old.vertices];lo=[min(v[i] for v in co) for i in range(3)];hi=[max(v[i] for v in co) for i in range(3)];span=[hi[i]-lo[i] for i in range(3)];units=[max(obj.matrix_world.to_3x3().col[i].length,1e-8) for i in range(3)]
  assert span[0]*units[0]>.3 and span[2]*units[2]>.3,'Armco axes require source inspection'
- bm=bmesh.new();centre=(lo[1]+hi[1])/2;height=min(.31,span[2]*units[2]*.4)/units[2];railcentre=lo[2]+span[2]*.72;depth=span[1]*.49
+ bm=bmesh.new();centre=(lo[1]+hi[1])/2;full_assembly=span[2]*units[2]>=.6;height=min(.31,span[2]*units[2]*.4)/units[2] if full_assembly else span[2]*.98;railcentre=lo[2]+span[2]*(.72 if full_assembly else .5);depth=span[1]*.49
  profile=[(-.5,0),(-.4,1),(-.23,-1),(0,.85),(.23,-1),(.4,1),(.5,0)];sections=25;rings=[]
  for j in range(sections):
   x=lo[0]+span[0]*j/(sections-1);near=[v.y for v in co if abs(v.x-x)<span[0]/12];path=sum(near)/len(near) if near else centre;path=max(lo[1]+depth,min(hi[1]-depth,path));rings.append([bm.verts.new((x,path+y*depth,railcentre+z*height)) for z,y in profile])
@@ -17,11 +17,12 @@ def armco_geometry(obj):
  def bolt(location):
   verts=bmesh.ops.create_cone(bm,cap_ends=True,cap_tris=False,segments=12,radius1=.006/units[0],radius2=.006/units[0],depth=.004/units[1])['verts'];rot=Matrix.Rotation(math.pi/2,4,'X')
   for v in verts:v.co=rot@v.co+Vector(location)
- for fraction in [.13,.87]:
-  x=lo[0]+span[0]*fraction;z=(lo[2]+hi[2])/2;postwidth=min(.07/units[0],span[0]*.08);postdepth=min(.048/units[1],span[1]*.8);gauge=.004/units[0]
-  # I-section: web and two flanges, with base and mounting plates.
-  box((x,centre,z),(gauge,postdepth,span[2]));box((x,centre-postdepth/2,z),(postwidth,gauge,span[2]));box((x,centre+postdepth/2,z),(postwidth,gauge,span[2]));box((x,centre,lo[2]+.004/units[2]),(postwidth*1.5,postdepth,.008/units[2]));box((x,centre,railcentre),(postwidth,postdepth,.2/units[2]))
-  for dz in [-.085,.085]:bolt((x,centre-depth*.9,railcentre+dz/units[2]))
+ if full_assembly:
+  for fraction in [(.1+.8*i/max(1,math.ceil(span[0]*units[0]/2))) for i in range(math.ceil(span[0]*units[0]/2)+1)]:
+   x=lo[0]+span[0]*fraction;z=(lo[2]+hi[2])/2;postwidth=min(.07/units[0],span[0]*.08);postdepth=min(.048/units[1],span[1]*.8);gauge=.004/units[0]
+   # I-section: web and two flanges, with base and mounting plates.
+   box((x,centre,z),(gauge,postdepth,span[2]));box((x,centre-postdepth/2,z),(postwidth,gauge,span[2]));box((x,centre+postdepth/2,z),(postwidth,gauge,span[2]));box((x,centre,lo[2]+.004/units[2]),(postwidth*1.5,postdepth,.008/units[2]));box((x,centre,railcentre),(postwidth,postdepth,.2/units[2]))
+   for dz in [-.085,.085]:bolt((x,centre-depth*.9,railcentre+dz/units[2]))
  # Rounded exposed edges carry physical highlights rather than surface-only noise.
  bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));mesh=bpy.data.meshes.new(old.name+'__reconstructed_armco');bm.to_mesh(mesh);bm.free();obj.data=mesh
  for layer in old.uv_layers:

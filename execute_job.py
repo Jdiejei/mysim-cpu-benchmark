@@ -34,7 +34,7 @@ for index,recipe in enumerate(job['recipes']):
         # Release added grass geometry after saving this item; its output is already durable.
         for detail in extra:bpy.data.objects.remove(detail,do_unlink=True)
     except Exception as e:failed.append({'procedure_id':recipe['procedure_id'],'mesh':recipe['mesh'],'error':str(e)});traceback.print_exc()
-    checkpoint();print('MESH_PROGRESS',len(records),len(failed),len(job['recipes']),flush=True)
+    checkpoint(True);print('MESH_PROGRESS',len(records),len(failed),len(job['recipes']),flush=True)
 report['state']='COMPLETE' if not remaining and not failed else 'PARTIAL' if remaining else 'NEEDS_REPAIR';checkpoint(True)
 manifest={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.iterdir() if p.suffix in {'.blend','.png'}};(out/'SHA256SUMS.json').write_text(json.dumps(manifest,indent=2));archive=root/f'{name}-{os.environ.get("GITHUB_RUN_ID","local")}.zip'
 with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1) as z:
