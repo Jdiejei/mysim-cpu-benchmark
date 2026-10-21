@@ -1,12 +1,12 @@
-﻿import bpy,bmesh,math
+import bpy,bmesh,math
 from mathutils import Matrix,Vector
 
 def armco_geometry(obj):
  # Source-sized procedural Armco candidate. It still requires visual/context acceptance.
  old=obj.data;co=[v.co.copy() for v in old.vertices];lo=[min(v[i] for v in co) for i in range(3)];hi=[max(v[i] for v in co) for i in range(3)];span=[hi[i]-lo[i] for i in range(3)];units=[max(obj.matrix_world.to_3x3().col[i].length,1e-8) for i in range(3)]
  assert span[0]*units[0]>.3 and span[2]*units[2]>.3,'Armco axes require source inspection'
- bm=bmesh.new();centre=(lo[1]+hi[1])/2;height=min(.31,span[2]*units[2]*.4)/units[2];railcentre=lo[2]+span[2]*.72;depth=span[1]*.42
- profile=[(-.5,0),(-.4,.8),(-.23,-.8),(0,.65),(.23,-.8),(.4,.8),(.5,0)];sections=25;rings=[]
+ bm=bmesh.new();centre=(lo[1]+hi[1])/2;height=min(.31,span[2]*units[2]*.4)/units[2];railcentre=lo[2]+span[2]*.72;depth=span[1]*.49
+ profile=[(-.5,0),(-.4,1),(-.23,-1),(0,.85),(.23,-1),(.4,1),(.5,0)];sections=25;rings=[]
  for j in range(sections):
   x=lo[0]+span[0]*j/(sections-1);near=[v.y for v in co if abs(v.x-x)<span[0]/12];path=sum(near)/len(near) if near else centre;path=max(lo[1]+depth,min(hi[1]-depth,path));rings.append([bm.verts.new((x,path+y*depth,railcentre+z*height)) for z,y in profile])
  for a,b in zip(rings,rings[1:]):

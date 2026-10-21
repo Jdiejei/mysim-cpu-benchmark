@@ -23,7 +23,7 @@ def rebuild(obj,recipe,root):
   if grass:extras.append(grass);changes.append('curved_blade_cluster_geometry')
  assert all(math.isfinite(x) for v in obj.data.vertices for x in v.co),'Nonfinite mesh'
  assert len(obj.data.uv_layers)==before['uv_layers'],'UV layers lost'
- delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));assert delta<=max(.01,scale*.002),'Silhouette bounds changed excessively'
+ delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));assert delta<=max(.01,scale*.002),f'Silhouette bounds changed excessively: before={before["bounds"]}, after={list(obj.dimensions)}, delta={delta}'
  for poly in obj.data.polygons:assert 0<=poly.material_index<max(1,len(obj.data.materials)),'Material index out of range'
  lodstats=[]
  for level,ratio in enumerate([.65,.3,.12],1):

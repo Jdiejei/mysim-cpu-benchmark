@@ -42,3 +42,5 @@ with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=
 run=subprocess.run(['gh','release','upload',tag,str(archive),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True)
 if run.returncode:raise RuntimeError('Output upload failed: '+run.stderr.decode(errors='replace'))
 print('JOB_RESULT',json.dumps({k:v for k,v in report.items() if k not in ['records','failures','import_repairs']}),flush=True)
+
+if failed:raise RuntimeError('Rebuild validation failures: '+str(len(failed)))
