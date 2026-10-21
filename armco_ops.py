@@ -30,7 +30,7 @@ def armco_geometry(obj):
   for poly in mesh.polygons:
    for index in poly.loop_indices:
     p=mesh.vertices[mesh.loops[index].vertex_index].co;uv.data[index].uv=((p.x-lo[0])/max(span[0],1e-8),(p.z-lo[2])/max(span[2],1e-8))
- return ['source_sized_corrugated_W_rail','I_section_posts','mounting_and_base_plates','twelve_sided_bolt_heads','reconstructed_UV_channels_require_artistic_review']
+ return ['source_sized_corrugated_W_rail','reconstructed_UV_channels_require_artistic_review']+(['I_section_posts','mounting_and_base_plates','twelve_sided_bolt_heads'] if full_assembly else ['rail_only_source_preserved_without_invented_posts'])
 
 
 def armco_material():
