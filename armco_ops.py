@@ -20,7 +20,7 @@ def armco_geometry(obj):
  for fraction in [.13,.87]:
   x=lo[0]+span[0]*fraction;z=(lo[2]+hi[2])/2;postwidth=min(.07/units[0],span[0]*.08);postdepth=min(.048/units[1],span[1]*.8);gauge=.004/units[0]
   # I-section: web and two flanges, with base and mounting plates.
-  box((x,centre,z),(gauge,postdepth,span[2]));box((x-postwidth/2,centre,z),(gauge,postdepth,span[2]));box((x+postwidth/2,centre,z),(gauge,postdepth,span[2]));box((x,centre,lo[2]+.004/units[2]),(postwidth*1.5,postdepth,.008/units[2]));box((x,centre,railcentre),(postwidth,postdepth,.2/units[2]))
+  box((x,centre,z),(gauge,postdepth,span[2]));box((x,centre-postdepth/2,z),(postwidth,gauge,span[2]));box((x,centre+postdepth/2,z),(postwidth,gauge,span[2]));box((x,centre,lo[2]+.004/units[2]),(postwidth*1.5,postdepth,.008/units[2]));box((x,centre,railcentre),(postwidth,postdepth,.2/units[2]))
   for dz in [-.085,.085]:bolt((x,centre-depth*.9,railcentre+dz/units[2]))
  # Rounded exposed edges carry physical highlights rather than surface-only noise.
  bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));mesh=bpy.data.meshes.new(old.name+'__reconstructed_armco');bm.to_mesh(mesh);bm.free();obj.data=mesh
@@ -30,3 +30,10 @@ def armco_geometry(obj):
    for index in poly.loop_indices:
     p=mesh.vertices[mesh.loops[index].vertex_index].co;uv.data[index].uv=((p.x-lo[0])/max(span[0],1e-8),(p.z-lo[2])/max(span[2],1e-8))
  return ['source_sized_corrugated_W_rail','I_section_posts','mounting_and_base_plates','twelve_sided_bolt_heads','reconstructed_UV_channels_require_artistic_review']
+
+
+def armco_material():
+ mat=bpy.data.materials.get('Reconstructed white painted steel')
+ if mat:return mat
+ mat=bpy.data.materials.new('Reconstructed white painted steel');mat.use_nodes=True;bs=mat.node_tree.nodes.get('Principled BSDF');bs.inputs['Base Color'].default_value=(.72,.73,.70,1);bs.inputs['Metallic'].default_value=.55;bs.inputs['Roughness'].default_value=.4
+ nodes=mat.node_tree.nodes;links=mat.node_tree.links;geom=nodes.new('ShaderNodeNewGeometry');noise=nodes.new('ShaderNodeTexNoise');noise.inputs['Scale'].default_value=900;noise.inputs['Detail'].default_value=2;links.new(geom.outputs['Position'],noise.inputs['Vector']);bump=nodes.new('ShaderNodeBump');bump.inputs['Distance'].default_value=.00008;bump.inputs['Strength'].default_value=.1;links.new(noise.outputs['Fac'],bump.inputs['Height']);links.new(bump.outputs['Normal'],bs.inputs['Normal']);return mat

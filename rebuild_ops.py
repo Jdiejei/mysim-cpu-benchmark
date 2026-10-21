@@ -1,7 +1,7 @@
 import bpy,bmesh,math,time
 from mathutils import Vector
 from detail_ops import make_material,grass_detail
-from armco_ops import armco_geometry
+from armco_ops import armco_geometry,armco_material
 
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
@@ -18,6 +18,8 @@ def rebuild(obj,recipe,root):
   except RuntimeError:obj.modifiers.remove(normals)
  obj.data.materials.clear()
  for binding in recipe['material_bindings']:obj.data.materials.append(make_material(binding,root,category))
+ if component_changes:
+  obj.data.materials.clear();obj.data.materials.append(armco_material());changes.append('new_painted_steel_material_source_atlas_retained_as_provenance_not_stretched_onto_new_UVs')
  if category=='grass':
   grass,_=grass_detail(obj,recipe)
   if grass:extras.append(grass);changes.append('curved_blade_cluster_geometry')
