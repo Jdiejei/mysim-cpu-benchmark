@@ -101,7 +101,19 @@ def drain_geometry(obj,recipe):
      for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
      assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
  emit('closing_source_following_backing',force=True,tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces))
- assert moved and maximum_weight>.5,'No physical slot recesses resolved';mesh=bpy.data.meshes.new(old.name+'__physical_grate');mesh.from_pydata(vertices,[],faces);mesh.update()
+ if not (moved and maximum_weight>.5):
+  bounds=[[min(uvpoint(i)[k] for t in old.loop_triangles for i in t.loops) for k in range(2)],[max(uvpoint(i)[k] for t in old.loop_triangles for i in t.loops) for k in range(2)]]
+  emit('no_slot_source_context',force=True,transformed_UV_bounds=bounds,maximum_slot_weight=maximum_weight)
+  if recipe.get('diagnose_no_slot_context'):
+   from detail_ops import make_material
+   from rebuild_ops import render_review
+   obj.data.materials.clear()
+   for binding in recipe['material_bindings']:obj.data.materials.append(make_material(binding,Path(__file__).parent/'wave-input',recipe['category']))
+   obj['drain_source_normal_world']=list(source_normal)
+   directory=Path(recipe['_diagnostic_directory']);images=render_review(obj,[],directory/(recipe['procedure_id']+'-source-context.blend'))
+   (directory/'source-context.json').write_text(json.dumps(dict(transformed_UV_bounds=bounds,maximum_slot_weight=maximum_weight,source_only_images=images,geometry_not_upgraded=True)))
+  raise AssertionError('No physical slot recesses resolved; source context retained')
+ mesh=bpy.data.meshes.new(old.name+'__physical_grate');mesh.from_pydata(vertices,[],faces);mesh.update()
  for layer_index,name in enumerate(names):
   layer=mesh.uv_layers.new(name=name)
   for loop in mesh.loops:layer.data[loop.index].uv=uv_values[layer_index][loop.vertex_index]
