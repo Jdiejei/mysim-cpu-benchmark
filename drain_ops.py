@@ -1,11 +1,21 @@
-﻿import bpy,bmesh,math,json,statistics,time
+import bpy,bmesh,math,json,statistics,time
 from pathlib import Path
 from mathutils import Vector,Matrix
 from mathutils.geometry import delaunay_2d_cdt
 from drain_uv_geometry import area,clip_convex,capsule
 
 def drain_geometry(obj,recipe):
- start=time.monotonic();bindings=[t for m in recipe['material_bindings'] for t in m.get('textures',[]) if t['property']=='_BaseMap'];assert len(bindings)==1 and bindings[0]['path'].endswith('/gnd_base_drain_01.png'),'Dedicated grate reference not supported';binding=bindings[0];pattern=json.loads((Path(__file__).parent/'drain-pattern.json').read_text());w=pattern['width'];h=pattern['height'];weights=pattern['weights'];raw_boxes=pattern['slot_regions'];full_height=statistics.median(y1-y0 for x0,y0,x1,y1 in raw_boxes if y0>.001 and y1<.999);boxes=[]
+ start=time.monotonic();last_emit=0;callback=recipe.get('_operator_progress_callback')
+ def emit(stage,force=False,**data):
+  nonlocal last_emit
+  if not callback or (not force and time.monotonic()-last_emit<20):return
+  try:
+   import resource
+   data['peak_RSS_MiB']=round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024,1)
+  except ImportError:pass
+  data.update(stage=stage,operator_elapsed_seconds=round(time.monotonic()-start,2));callback(data);last_emit=time.monotonic()
+ emit('reading_source_grate_reference',force=True)
+ bindings=[t for m in recipe['material_bindings'] for t in m.get('textures',[]) if t['property']=='_BaseMap'];assert len(bindings)==1 and bindings[0]['path'].endswith('/gnd_base_drain_01.png'),'Dedicated grate reference not supported';binding=bindings[0];pattern=json.loads((Path(__file__).parent/'drain-pattern.json').read_text());w=pattern['width'];h=pattern['height'];weights=pattern['weights'];raw_boxes=pattern['slot_regions'];full_height=statistics.median(y1-y0 for x0,y0,x1,y1 in raw_boxes if y0>.001 and y1<.999);boxes=[]
  for x0,y0,x1,y1 in raw_boxes:
   if y0<.001:y0=y1-full_height
   if y1>.999:y1=y0+full_height
@@ -36,7 +46,7 @@ def drain_geometry(obj,recipe):
    for ty in range(math.floor(min(p[1] for p in uv)),math.floor(max(p[1] for p in uv))+1):
     domain=clip_convex(uv,[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)])
     if not domain:continue
-    tile_count+=1;assert tile_count<=10000,'Source grate tile-fragment budget exceeded';domain=[(x-tx,y-ty) for x,y in domain];points=list(domain);edges=[(i,(i+1)%len(points)) for i in range(len(points))]
+    tile_count+=1;emit('building_physical_slot_tiles',tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces));assert time.monotonic()-start<4*3600,'Single-grate prototype compute budget exceeded';assert tile_count<=10000,'Source grate tile-fragment budget exceeded';domain=[(x-tx,y-ty) for x,y in domain];points=list(domain);edges=[(i,(i+1)%len(points)) for i in range(len(points))]
     for box in boxes:
      radius=(box[3]-box[1])/2
      for ring in range(6):
@@ -49,6 +59,7 @@ def drain_geometry(obj,recipe):
      for layer_index in range(len(names)):uv_values[layer_index].append(tuple(sum(blend[j]*layer_values[layer_index][j][k] for j in range(3)) for k in range(2)))
     for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
     assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
+ emit('closing_source_following_backing',force=True,tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces))
  assert moved and maximum_weight>.5,'No physical slot recesses resolved';mesh=bpy.data.meshes.new(old.name+'__physical_grate');mesh.from_pydata(vertices,[],faces);mesh.update()
  for layer_index,name in enumerate(names):
   layer=mesh.uv_layers.new(name=name)
@@ -57,5 +68,6 @@ def drain_geometry(obj,recipe):
  obj.data=mesh;obj.matrix_world=matrix@Matrix.Translation(origin);bpy.context.view_layer.update();bm=bmesh.new();bm.from_mesh(mesh);tolerance=max(max(abs(v) for v in obj.dimensions)/max(linear.col[i].length for i in range(3))*2e-7,1e-7);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(mesh);bm.free();mesh.update()
  if boundaries:
   shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
+ emit('physical_slot_geometry_complete',force=True,tile_fragments=tile_count,generated_vertices=top_vertices,generated_faces=top_faces)
  obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_UV_tile_fragments']=tile_count;obj['drain_max_source_UV_span']=max_uv_span;obj['drain_local_origin_offset']=list(origin);obj['drain_geometry_seconds']=time.monotonic()-start
  return ['source_reference12_slot_regions','UV_tile_clipped_constrained_triangulation','six_ring_rounded_physical_slot_lips_and_recessed_wells','source_weathering_UV0_and_lightmap_UV1_preserved_without_repacking','local_origin_precision_recenter_with_original_world_placement_preserved','closed_source_following_backing','original_driving_collision_retained']

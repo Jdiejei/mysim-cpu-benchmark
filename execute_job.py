@@ -4,7 +4,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 import import_patch
 from rebuild_ops import rebuild,render_review
 root=Path.cwd();name=sys.argv[sys.argv.index('--')+1];job=json.loads((root/'wave-input'/f'{name}.json').read_text());sources={s['key']:s for s in json.loads((root/'sources.json').read_text())};wave=os.environ.get('WAVE','0001');tag='candidates-wave-'+wave;out=root/'results'/name;out.mkdir(parents=True,exist_ok=True);start=time.monotonic();last_publish=0;records=[];failed=[];remaining=[];loaded=None
-report={'job_id':name,'state':'RUNNING','assigned_mesh_references':len(job['recipes']),'processed':0,'failed':0,'records':records,'failures':failed,'remaining':remaining,'quality_accepted':False,'runtime_specs':{'cpu_count':os.cpu_count(),'RAM_GiB':round(os.sysconf('SC_PAGE_SIZE')*os.sysconf('SC_PHYS_PAGES')/2**30,1),'free_disk_GiB':round(shutil.disk_usage(root).free/2**30,1)}}
+report={'job_id':name,'state':'RUNNING','assigned_mesh_references':len(job['recipes']),'processed':0,'failed':0,'records':records,'failures':failed,'remaining':remaining,'quality_accepted':False,'scope':job.get('scope','geometry_reconstruction_candidate'),'runtime_specs':{'cpu_count':os.cpu_count(),'RAM_GiB':round(os.sysconf('SC_PAGE_SIZE')*os.sysconf('SC_PHYS_PAGES')/2**30,1),'free_disk_GiB':round(shutil.disk_usage(root).free/2**30,1)}}
 assert os.cpu_count()>=4 and report['runtime_specs']['RAM_GiB']>=12,'Runner does not meet documented CPU/RAM requirements'
 def checkpoint(force=False):
     global last_publish
@@ -12,6 +12,8 @@ def checkpoint(force=False):
     if force or time.monotonic()-last_publish>300:
         run=subprocess.run(['gh','release','upload',tag,str(p),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True);last_publish=time.monotonic()
         if run.returncode:print('CHECKPOINT_PUBLISH_WARNING',run.stderr.decode(errors='replace'),flush=True)
+def operator_progress(info):
+    report['operator_progress']=info;checkpoint(True)
 checkpoint(True);import_patch.install()
 for index,recipe in enumerate(job['recipes']):
     if time.monotonic()-start>4.5*3600:remaining.extend(r['procedure_id'] for r in job['recipes'][index:]);break
@@ -29,8 +31,11 @@ for index,recipe in enumerate(job['recipes']):
         obj=bpy.context.scene.objects.get(recipe['mesh']);assert obj is not None,'Mesh not found'
         expected=recipe.get('specification') or {};assert len(obj.data.vertices)==expected.get('vertices',len(obj.data.vertices)),'Source mesh vertex count changed'
         if not ((recipe['category']=='barrier' and ('armco' in obj.name.lower() or ('single' in obj.name.lower() and any(w in obj.name.lower() for w in ['tyre','tire'])))) or (recipe['category']=='ground' and any(w in obj.name.lower() for w in ['curb','kerb','ripple','drain']))):raise RuntimeError('Dedicated component reconstruction operator not yet validated for this asset family')
-        result,extra=rebuild(obj,recipe,root/'wave-input');path=out/(recipe['procedure_id']+'.blend');result['review_images']=render_review(obj,extra,path);bpy.data.libraries.write(str(path),{obj,*extra},compress=True)
-        result.update(procedure_id=recipe['procedure_id'],mesh=recipe['mesh'],source_key=key,category=recipe['category'],output=path.name,output_bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest());records.append(result)
+        if recipe.get('prototype_source_tile_only'):
+            from drain_patch import extract_source_tile_patch
+            report['prototype_source_patch']=extract_source_tile_patch(obj,recipe)
+        recipe['_operator_progress_callback']=operator_progress;result,extra=rebuild(obj,recipe,root/'wave-input');path=out/(recipe['procedure_id']+'.blend');result['review_images']=render_review(obj,extra,path);bpy.data.libraries.write(str(path),{obj,*extra},compress=True)
+        result.update(source_scope=job.get('scope','full_source_mesh'),procedure_id=recipe['procedure_id'],mesh=recipe['mesh'],source_key=key,category=recipe['category'],output=path.name,output_bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest());records.append(result)
         # Release added grass geometry after saving this item; its output is already durable.
         for detail in extra:bpy.data.objects.remove(detail,do_unlink=True)
     except Exception as e:failed.append({'procedure_id':recipe['procedure_id'],'mesh':recipe['mesh'],'error':str(e)});traceback.print_exc()
