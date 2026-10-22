@@ -53,6 +53,9 @@ def drain_geometry(obj,recipe):
       for ring in range(6):
        contour=clip_convex([(x+tx,y+ty) for x,y in capsule(*box,inset=radius*.4*ring/5,segments=16)],domain)
        if contour:
+        # Ignore slot contours with no positive-area intersection with this actual source chart.
+        relevant=any(abs(area(clip_convex(contour,t[1])))>1e-14 for t in triangles)
+        if not relevant:continue
         base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
    result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False)
    def bary(p,uv,den):
