@@ -11,7 +11,12 @@ from source_surface_ops import refine_source_surface
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
  collision=obj.copy();collision.data=original.copy();collision.name=obj.name+'__original_collision';collision.hide_render=True;bpy.context.collection.objects.link(collision)
- obj.data=original.copy();bm=bmesh.new();bm.from_mesh(obj.data);scale=max(max(obj.dimensions),.001);tolerance=min(.00001,scale*.000001)/max(max(abs(v) for v in obj.scale),1e-8)
+ obj.data=original.copy();
+ if recipe.get('validate_source_face_provenance'):
+  attribute=obj.data.attributes.new(name='source_polygon_id',type='INT',domain='FACE')
+  for polygon in obj.data.polygons:attribute.data[polygon.index].value=polygon.index
+  obj['validate_source_face_provenance']=True
+ bm=bmesh.new();bm.from_mesh(obj.data);scale=max(max(obj.dimensions),.001);tolerance=min(.00001,scale*.000001)/max(max(abs(v) for v in obj.scale),1e-8)
  
  if recipe.get('reconstruction_mode')!='source_surface_refinement':
   bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1)

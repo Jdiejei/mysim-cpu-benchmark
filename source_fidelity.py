@@ -1,10 +1,13 @@
 ﻿import math,statistics
 from mathutils import Vector
 from mathutils.bvhtree import BVHTree
-from mathutils.geometry import barycentric_transform
+from mathutils.geometry import barycentric_transform,closest_point_on_tri
 
 def source_fidelity(candidate,source,limit=1200):
  mesh=candidate.data;original=source.data;mesh.calc_loop_triangles();original.calc_loop_triangles();vertices=[candidate.matrix_world@v.co for v in mesh.vertices];triangles=[tuple(t.vertices) for t in mesh.loop_triangles];tree=BVHTree.FromPolygons(vertices,triangles,all_triangles=True);distances=[];uv_errors=[];uv1_errors=[];page_matches=[]
+ provenance=mesh.attributes.get('source_polygon_id') if candidate.get('validate_source_face_provenance') else None;provenance_faces={}
+ if provenance:
+  for index,target in enumerate(mesh.loop_triangles):provenance_faces.setdefault(provenance.data[target.polygon_index].value,[]).append(index)
  source_vertices=list(original.vertices);step=max(1,math.ceil(len(source_vertices)/limit))
  for v in source_vertices[::step]:
   nearest=tree.find_nearest(source.matrix_world@v.co)
@@ -15,6 +18,15 @@ def source_fidelity(candidate,source,limit=1200):
   point=sum((source.matrix_world@original.vertices[i].co for i in tri.vertices),Vector())/3;near,normal,index,distance=tree.find_nearest(point)
   if near is None:raise RuntimeError('Missing reconstructed face-nearest surface')
   distances.append(distance)
+  if candidate.get('validate_source_face_provenance'):
+   assert provenance,'Source polygon provenance lost'
+   indices=provenance_faces.get(tri.polygon_index,[]);assert indices,'Original source polygon missing from candidate'
+   choices=[]
+   for target_index in indices:
+    target=mesh.loop_triangles[target_index];a,b,c=[vertices[i] for i in target.vertices]
+    if (b-a).cross(c-a).length_squared<=1e-24:continue
+    projected_point=closest_point_on_tri(point,a,b,c);choices.append(((projected_point-point).length,target_index,projected_point))
+   assert choices,'No nondegenerate candidate source polygon';distance,index,near=min(choices,key=lambda x:x[0]);assert distance<=max(max(source.dimensions),1e-8)*.003,'Corresponding source polygon moved beyond source profile tolerance'
   if source_uv and target_uv:
    expected=sum((source_uv.data[i].uv for i in tri.loops),Vector((0,0)))/3;target=mesh.loop_triangles[index];corners=[vertices[i] for i in target.vertices];uvs=[Vector((*target_uv.data[i].uv,0)) for i in target.loops]
    if (corners[1]-corners[0]).cross(corners[2]-corners[0]).length_squared>1e-24:
