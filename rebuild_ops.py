@@ -39,6 +39,7 @@ def rebuild(obj,recipe,root):
  fidelity=source_fidelity(obj,collision) if (is_kerb or is_drain or source_refinement) else None
  if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed source-relative profile tolerance: '+str(fidelity)
  if source_refinement:assert fidelity['uv1_unambiguous_page_mismatches']==0,'Encoded UV1 page changed in source refinement'
+ if source_refinement:assert max(fidelity.get('uv0_max_error') or 0,fidelity.get('uv1_max_error') or 0)<=.001,'Source UV projection is ambiguous or changed beyond0.001; hold for dedicated review'
  lodstats=[]
  for level,ratio in enumerate([.65,.3,.12],1):
   lod=obj.copy();lod.data=obj.data.copy();lod.name=obj.name+'__LOD'+str(level);bpy.context.collection.objects.link(lod);bpy.context.view_layer.objects.active=lod;mod=lod.modifiers.new('Runtime simplification','DECIMATE');mod.ratio=ratio;mod.use_collapse_triangulate=True

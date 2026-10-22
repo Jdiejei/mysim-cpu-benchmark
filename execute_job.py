@@ -26,7 +26,7 @@ def operator_progress(info):
     report['operator_progress']=info;checkpoint(False)
 checkpoint(True);import_patch.install()
 for index,recipe in enumerate(job['recipes']):
-    if time.monotonic()-start>4.5*3600:remaining.extend(r['procedure_id'] for r in job['recipes'][index:]);break
+    if time.monotonic()-start>4.5*3600 or sum(p.stat().st_size for p in out.iterdir() if p.is_file())>1024**3-32*1024**2:remaining.extend(r['procedure_id'] for r in job['recipes'][index:]);break
     try:
         key=recipe['source_key'];s=sources[key]
         if key!=loaded:
