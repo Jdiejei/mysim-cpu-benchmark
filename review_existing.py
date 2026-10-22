@@ -29,7 +29,7 @@ for item in job['candidates']:
    for mat in obj.data.materials:
     if mat and mat.use_nodes:
      for node in mat.node_tree.nodes:
-      if node.type=='TEX_IMAGE' and node.image and 'gnd_base_drain_01' in (node.image.name+' '+node.image.filepath):node.image=replacement;replaced+=1
+      if node.type=='TEX_IMAGE' and node.image and node.image.packed_file and hashlib.sha256(bytes(node.image.packed_file.data)).hexdigest()==spec['source_image_sha256']:node.image=replacement;replaced+=1
    assert replaced>0,'Exact source texture image node not found:'+json.dumps([dict(material=m.name,node=n.name,image=n.image.name,path=n.image.filepath,size=list(n.image.size),packed=bool(n.image.packed_file)) for m in obj.data.materials if m and m.use_nodes for n in m.node_tree.nodes if n.type=='TEX_IMAGE' and n.image])
    assert before_geometry==[tuple(v.co) for v in obj.data.vertices] and before_uvs==[[tuple(d.uv) for d in u.data] for u in obj.data.uv_layers],'Read-only review changed geometry or UVs'
    material_review=dict(texture_sha256=spec['sha256'],replaced_exact_source_nodes=replaced,saved_candidate_modified=False,geometry_and_UVs_unchanged=True)
