@@ -27,7 +27,7 @@ def drain_geometry(obj,recipe):
   for a,b in [(0,1),(1,2),(2,0)]:
    distance=math.dist(uvpoint(tri.loops[a]),uvpoint(tri.loops[b]))
    if distance>1e-6:ratios.append((linear@(old.vertices[tri.vertices[a]].co-old.vertices[tri.vertices[b]].co)).length/distance)
- assert ratios,'No resolved source UV-to-surface scale';depth=min(statistics.median(ratios)*.006,scale*.0006);source_normal=sum(((linear@(old.vertices[t.vertices[1]].co-old.vertices[t.vertices[0]].co)).cross(linear@(old.vertices[t.vertices[2]].co-old.vertices[t.vertices[0]].co)) for t in old.loop_triangles),Vector()).normalized();assert source_normal.length>.9,'Unresolved source cover normal';down=linear.inverted()@(-source_normal*depth);vertices=[];faces=[];materials=[];uv_values=[[] for _ in names];tile_count=0;max_uv_span=0;maximum_weight=0;moved=0
+ assert ratios,'No resolved source UV-to-surface scale';depth=statistics.median(ratios)*.0006;source_normal=sum(((linear@(old.vertices[t.vertices[1]].co-old.vertices[t.vertices[0]].co)).cross(linear@(old.vertices[t.vertices[2]].co-old.vertices[t.vertices[0]].co)) for t in old.loop_triangles),Vector()).normalized();assert source_normal.length>.9,'Unresolved source cover normal';down=linear.inverted()@(-source_normal*depth);vertices=[];faces=[];materials=[];uv_values=[[] for _ in names];tile_count=0;max_uv_span=0;maximum_weight=0;moved=0
  def sample(point):
   x=(point[0]%1)*w-.5;y=(point[1]%1)*h-.5;ix=math.floor(x);iy=math.floor(y);fx=x-ix;fy=y-iy
   return sum(weights[((iy+dy)%h)*w+(ix+dx)%w]*(fx if dx else 1-fx)*(fy if dy else 1-fy) for dx,dy in [(0,0),(1,0),(0,1),(1,1)])
@@ -41,7 +41,7 @@ def drain_geometry(obj,recipe):
    if abs(den)<1e-12:continue
    triangles.append((tri,uv,den));base=len(points);points.extend(uv);edges.extend((base+i,base+(i+1)%3) for i in range(3))
   assert triangles,'Empty cover source UV domain'
-  min_tx=math.floor(min(p[0] for p in points)+1e-6);min_ty=math.floor(min(p[1] for p in points)+1e-6);max_tx=math.ceil(max(p[0] for p in points)-1e-6);max_ty=math.ceil(max(p[1] for p in points)-1e-6);tile_area=(max_tx-min_tx)*(max_ty-min_ty);assert 1<=tile_area<=2,'Partial cover bounded tile limit exceeded'
+  min_tx=math.floor(min(p[0] for p in points)+1e-6);min_ty=math.floor(min(p[1] for p in points)+1e-6);max_tx=math.ceil(max(p[0] for p in points)-1e-6);max_ty=math.ceil(max(p[1] for p in points)-1e-6);tile_area=(max_tx-min_tx)*(max_ty-min_ty);assert 1<=tile_area<=64,'Component bounded tile limit exceeded'
   for tx in range(min_tx,max_tx):
    for ty in range(min_ty,max_ty):
     domain=[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)]
@@ -60,9 +60,9 @@ def drain_geometry(obj,recipe):
    assert len(matches)==1 or max(min(bary(center,t[1],t[2])) for t in matches)<1e-5,'Overlapping source UV triangles in cover'
    tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));base=len(vertices)
    for point in uvface:
-    blend=bary(point,uv,den);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+down[k]*amount for k in range(3)))
+    blend=bary(point,uv,den);normal_local=sum((old.vertices[tri.vertices[j]].normal*blend[j] for j in range(3)),Vector()).normalized();normal_world=(linear.inverted().transposed()@normal_local).normalized();point_down=linear.inverted()@(-normal_world*depth);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+point_down[k]*amount for k in range(3)))
     for layer_index,layer in enumerate(old.uv_layers):uv_values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
-   faces.append((base,base+1,base+2));materials.append(tri.material_index)
+   faces.append((base,base+1,base+2));materials.append(tri.material_index);assert len(vertices)<600000 and len(faces)<1000000,'Component geometry budget exceeded'
   tile_count=tile_area;max_uv_span=max(max_tx-min_tx,max_ty-min_ty);emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
  else:
   for tri in old.loop_triangles:
