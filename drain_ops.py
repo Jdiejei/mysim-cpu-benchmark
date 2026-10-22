@@ -16,7 +16,7 @@ def drain_geometry(obj,recipe):
   except ImportError:pass
   data.update(stage=stage,operator_elapsed_seconds=round(time.monotonic()-start,2));callback(data);last_emit=time.monotonic()
  emit('reading_source_grate_reference',force=True)
- bindings=[t for m in recipe['material_bindings'] for t in m.get('textures',[]) if t['property']=='_BaseMap'];assert len(bindings)==1,'Dedicated grate requires one resolved base reference';binding=bindings[0];trench=recipe.get('dedicated_trench_reference')=='trench_01';assert binding['path'].endswith('/gnd_drain_trench_01.png' if trench else '/gnd_base_drain_01.png'),'Dedicated grate reference not supported';pattern=json.loads((Path(__file__).parent/('trench-01-pattern.json' if trench else 'drain-pattern.json')).read_text());w=pattern['width'];h=pattern['height'];weights=pattern['weights'];raw_boxes=pattern['slot_regions'];full_height=statistics.median(y1-y0 for x0,y0,x1,y1 in raw_boxes if y0>.001 and y1<.999);boxes=[]
+ bindings=[t for m in recipe['material_bindings'] for t in m.get('textures',[]) if t['property']=='_BaseMap'];assert len(bindings)==1,'Dedicated grate requires one resolved base reference';binding=bindings[0];trench_kind=recipe.get('dedicated_trench_reference');trench=trench_kind in {'trench_01','trench_04'};reference_path={'trench_01':'/gnd_drain_trench_01.png','trench_04':'/gnd_drain_trench_04.png'}.get(trench_kind,'/gnd_base_drain_01.png');assert binding['path'].endswith(reference_path),'Dedicated grate reference not supported';pattern=json.loads((Path(__file__).parent/({'trench_01':'trench-01-pattern.json','trench_04':'trench-04-pattern.json'}.get(trench_kind,'drain-pattern.json'))).read_text());w=pattern['width'];h=pattern['height'];weights=pattern['weights'];raw_boxes=pattern['slot_regions'];full_height=statistics.median(y1-y0 for x0,y0,x1,y1 in raw_boxes if y0>.001 and y1<.999);boxes=[]
  for x0,y0,x1,y1 in raw_boxes:
   if y0<.001:y0=y1-full_height
   if y1>.999:y1=y0+full_height
@@ -101,7 +101,7 @@ def drain_geometry(obj,recipe):
      for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
      assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
  emit('closing_source_following_backing',force=True,tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces))
- preserved_gutter=trench and recipe.get('preserved_gutter_source_component')==5
+ preserved_gutter=trench_kind=='trench_01' and recipe.get('preserved_gutter_source_component')==5
  if preserved_gutter:
   assert recipe.get('prototype_component_index')==5 and recipe.get('prototype_parent_procedure_id')=='9c0fd01c5398b78cf220f753','Unsupported preserved gutter identity'
   assert maximum_weight==0 and moved==0,'Preserved gutter unexpectedly intersects grate mask'
