@@ -6,6 +6,7 @@ from tyre_ops import tyre_geometry,tyre_material
 from kerb_ops import kerb_geometry
 from source_fidelity import source_fidelity
 from drain_ops import drain_geometry
+from source_surface_ops import refine_source_surface
 
 def rebuild(obj,recipe,root):
  start=time.monotonic();original=obj.data;before={'vertices':len(original.vertices),'faces':len(original.polygons),'uv_layers':len(original.uv_layers),'bounds':list(obj.dimensions)};assert before['vertices']>2 and before['faces']>0,'Empty source'
@@ -13,7 +14,7 @@ def rebuild(obj,recipe,root):
  obj.data=original.copy();bm=bmesh.new();bm.from_mesh(obj.data);scale=max(max(obj.dimensions),.001);tolerance=min(.00001,scale*.000001)/max(max(abs(v) for v in obj.scale),1e-8)
  bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(obj.data);bm.free();obj.data.update()
  bpy.ops.object.select_all(action='DESELECT');obj.select_set(True);bpy.context.view_layer.objects.active=obj
- category=recipe['category'];is_drain=category=='ground' and 'drain' in obj.name.lower();is_kerb=category=='ground' and any(t in obj.name.lower() for t in ['curb','kerb','ripple']);is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();component_changes=armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else kerb_geometry(obj,recipe) if is_kerb else drain_geometry(obj,recipe) if is_drain else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
+ category=recipe['category'];is_drain=category=='ground' and 'drain' in obj.name.lower();is_kerb=category=='ground' and any(t in obj.name.lower() for t in ['curb','kerb','ripple']);is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();source_refinement=recipe.get('reconstruction_mode')=='source_surface_refinement';component_changes=refine_source_surface(obj) if source_refinement else armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else kerb_geometry(obj,recipe) if is_kerb else drain_geometry(obj,recipe) if is_drain else [];changes=['separate_original_collision_preserved','scale_aware_duplicate_and_degenerate_repair','consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
  rebuilt_bm=bmesh.new();rebuilt_bm.from_mesh(obj.data);bmesh.ops.recalc_face_normals(rebuilt_bm,faces=list(rebuilt_bm.faces));nonmanifold=sum(not e.is_manifold for e in rebuilt_bm.edges);rebuilt_bm.to_mesh(obj.data);rebuilt_bm.free();assert nonmanifold==0,'Reconstructed component has nonmanifold edges';changes.append('closed_manifold_and_outward_normals_checked')
  # Surface thickness and road shape are never invented. Structural edges are dimensioned in world units.
  if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb','ripple','drain']):
@@ -23,7 +24,7 @@ def rebuild(obj,recipe,root):
   except RuntimeError:obj.modifiers.remove(normals)
  obj.data.materials.clear()
  for binding in recipe['material_bindings']:obj.data.materials.append(make_material(binding,root,category))
- if component_changes and not (is_kerb or is_drain):
+ if component_changes and not (is_kerb or is_drain or source_refinement):
   obj.data.materials.clear();obj.data.materials.append(tyre_material() if is_tyre else armco_material());changes.append('new_family_material_source_atlas_retained_as_provenance_not_stretched_onto_new_UVs')
  if category=='grass':
   grass,_=grass_detail(obj,recipe)
@@ -32,7 +33,7 @@ def rebuild(obj,recipe,root):
  assert len(obj.data.uv_layers)==before['uv_layers'],'UV layers lost'
  delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));callback=recipe.get('_operator_progress_callback');callback(dict(stage='bounds_diagnostic',before_bounds=before['bounds'],after_bounds=list(obj.dimensions),delta=delta,relative_depth=obj.get('drain_relative_slot_depth'),source_normal=list(obj.get('drain_source_normal_world',[])))) if callback else None;assert delta<=max(.01,scale*.002),f'Silhouette bounds changed excessively: before={before["bounds"]}, after={list(obj.dimensions)}, delta={delta}'
  for poly in obj.data.polygons:assert 0<=poly.material_index<max(1,len(obj.data.materials)),'Material index out of range'
- fidelity=source_fidelity(obj,collision) if (is_kerb or is_drain) else None
+ fidelity=source_fidelity(obj,collision) if (is_kerb or is_drain or source_refinement) else None
  if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed source-relative profile tolerance: '+str(fidelity)
  lodstats=[]
  for level,ratio in enumerate([.65,.3,.12],1):
