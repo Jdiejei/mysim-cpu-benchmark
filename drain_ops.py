@@ -110,7 +110,19 @@ def drain_geometry(obj,recipe):
     factor=(v.co-a.co).dot(direction)/length2
     if tolerance/math.sqrt(length2)<factor<1-tolerance/math.sqrt(length2) and (a.co+direction*factor-v.co).length<tolerance:
      new_edge,new_vertex=bmesh.utils.edge_split(current,a,factor);new_vertex.co=v.co;pending.extend([current,new_edge]);splits+=1;assert splits<20000,'Boundary conformity split budget exceeded';break
- bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);excess=sum(len(e.link_faces)>2 for e in bm.edges);emit('top_surface_edge_incidence',force=True,edges=len(bm.edges),vertices=len(bm.verts),faces=len(bm.faces),boundary_edges=boundaries,excess_incidence_edges=excess)
+ bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance)
+ # Degenerate dissolution can leave collinear multi-edge polygons along long source constraints.
+ # Only discard zero-width ngons below the existing positional tolerance, with a strict area budget.
+ slivers=[];total_area=sum(f.calc_area() for f in bm.faces)
+ for face in bm.faces:
+  if len(face.verts)<=3:continue
+  a,b=max(((a,b) for a in face.verts for b in face.verts),key=lambda pair:(pair[0].co-pair[1].co).length_squared);direction=b.co-a.co
+  if direction.length_squared and max((v.co-a.co).cross(direction).length/direction.length for v in face.verts)<=tolerance:slivers.append(face)
+ removed_area=sum(f.calc_area() for f in slivers);assert removed_area<=total_area*1e-5,'Zero-width cleanup exceeded source area budget'
+ if slivers:
+  bmesh.ops.delete(bm,geom=slivers,context='FACES_ONLY');loose=[e for e in bm.edges if not e.link_faces]
+  if loose:bmesh.ops.delete(bm,geom=loose,context='EDGES')
+ emit('zero_width_constraint_polygon_cleanup',force=True,removed_zero_width_ngons=len(slivers),removed_area_fraction=removed_area/max(total_area,1e-20));bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);excess=sum(len(e.link_faces)>2 for e in bm.edges);emit('top_surface_edge_incidence',force=True,edges=len(bm.edges),vertices=len(bm.verts),faces=len(bm.faces),boundary_edges=boundaries,excess_incidence_edges=excess)
  if excess:
   rejected=[dict(edge_length=e.calc_length(),vertices=[list(v.co) for v in e.verts],linked_face_areas=[f.calc_area() for f in e.link_faces],linked_face_vertices=[[list(v.co) for v in f.verts] for f in e.link_faces]) for e in bm.edges if len(e.link_faces)>2];emit('rejected_top_surface_diagnostics',force=True,excess_incidence_edges=excess,rejected_edges=rejected[:8]);directory=recipe.get('_diagnostic_directory')
   if directory:
