@@ -1,5 +1,5 @@
 ﻿import bpy,bmesh,math,collections
-from mathutils import Vector
+from mathutils import Vector,Matrix
 from drain_uv_geometry import area,clip_convex
 
 def extract_source_tile_patch(obj,recipe):
@@ -37,6 +37,7 @@ def extract_source_tile_patch(obj,recipe):
    wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;blend=(wa,wb,1-wa-wb);vertices.append(tuple(sum(blend[j]*mesh.vertices[tri.vertices[j]].co[k] for j in range(3)) for k in range(3)))
    for layer_index,layer in enumerate(mesh.uv_layers):values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
   for i in range(1,len(polygon)-1):faces.append((base,base+i,base+i+1));materials.append(tri.material_index)
+ reference_origin=tuple((min(v[k] for v in vertices)+max(v[k] for v in vertices))*.5 for k in range(3));vertices=[tuple(v[k]-reference_origin[k] for k in range(3)) for v in vertices];original_matrix=obj.matrix_world.copy()
  original_area=sum(triangle_areas[t] for t in source_triangles[key[0]]);patch_area=sum((Vector(vertices[b])-Vector(vertices[a])).cross(Vector(vertices[c])-Vector(vertices[a])).length/2 for a,b,c in faces);uncovered=[t for t in source_triangles[key[0]] if triangle_areas[t]>max(original_area*1e-9,1e-12) and (UV_areas[t]<1e-12 or abs(covered_UV[t]-UV_areas[t])>UV_areas[t]*1e-6)];coverage=dict(source_area=original_area,patch_area=patch_area,area_relative_error=abs(patch_area-original_area)/max(original_area,1e-20),uncovered_nonzero_area_source_triangles=uncovered,source_triangle_inventory=inventory)
  if recipe.get('prototype_full_component'):assert not uncovered and coverage['area_relative_error']<1e-5,'Source component coverage failed:'+str(coverage)
  patch=bpy.data.meshes.new(mesh.name+'__one_source_cover_reference');patch.from_pydata(vertices,[],faces);patch.update()
@@ -44,4 +45,4 @@ def extract_source_tile_patch(obj,recipe):
   layer=patch.uv_layers.new(name=source_layer.name)
   for loop in patch.loops:layer.data[loop.index].uv=values[n][loop.vertex_index]
  for p,index in zip(patch.polygons,materials):p.material_index=index
- obj.data=patch;bpy.context.view_layer.update();return dict(scope='selected_source_component_partial_mesh',parent_procedure_id=recipe['prototype_parent_procedure_id'],parent_mesh=recipe['mesh'],source_components=len({find(i) for i in range(len(parent))}),source_UV_tile_patches=len(areas),source_max_UV_span=UVspan,selected_component=key[0],selected_tile=list(key[1:]),selected_tiles=[list(k[1:]) for k in selected],selected_UV_area=sum(areas[k] for k in selected),reference_faces=len(faces),reference_vertices=len(vertices),source_coverage=coverage,full_source_mesh_upgraded=False)
+ obj.data=patch;obj.matrix_world=original_matrix@Matrix.Translation(Vector(reference_origin));bpy.context.view_layer.update();return dict(scope='selected_source_component_partial_mesh',parent_procedure_id=recipe['prototype_parent_procedure_id'],parent_mesh=recipe['mesh'],source_components=len({find(i) for i in range(len(parent))}),source_UV_tile_patches=len(areas),source_max_UV_span=UVspan,selected_component=key[0],selected_tile=list(key[1:]),selected_tiles=[list(k[1:]) for k in selected],selected_UV_area=sum(areas[k] for k in selected),reference_faces=len(faces),reference_vertices=len(vertices),source_coverage=coverage,reference_local_origin_offset=list(reference_origin),full_source_mesh_upgraded=False)
