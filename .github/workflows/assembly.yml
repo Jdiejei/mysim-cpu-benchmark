@@ -1,7 +1,11 @@
 name: MySim verified source assembly
+run-name: MySim assembly ${{ inputs.wave }} ${{ inputs.dispatch_id }}
 on:
   workflow_dispatch:
     inputs:
+      dispatch_id:
+        required: false
+        default: manual
       groups:
         description: Non-overlapping job IDs
         required: true
