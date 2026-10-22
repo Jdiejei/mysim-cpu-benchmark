@@ -20,7 +20,7 @@ def rebuild(obj,recipe,root):
  category=recipe['category'];is_drain=category=='ground' and 'drain' in obj.name.lower();is_kerb=category=='ground' and any(t in obj.name.lower() for t in ['curb','kerb','ripple']);is_tyre=any(t in obj.name.lower() for t in ['tyre','tire']) and 'single' in obj.name.lower();source_refinement=recipe.get('reconstruction_mode')=='source_surface_refinement';component_changes=refine_source_surface(obj) if source_refinement else armco_geometry(obj) if category=='barrier' and 'armco' in obj.name.lower() else tyre_geometry(obj) if is_tyre else kerb_geometry(obj,recipe) if is_kerb else drain_geometry(obj,recipe) if is_drain else [];changes=['separate_original_collision_preserved',('source_connectivity_preserved_without_cross_surface_welding' if source_refinement else 'scale_aware_duplicate_and_degenerate_repair'),'consistent_surface_normals'];extras=[collision];changes.extend(component_changes)
  rebuilt_bm=bmesh.new();rebuilt_bm.from_mesh(obj.data);bmesh.ops.recalc_face_normals(rebuilt_bm,faces=list(rebuilt_bm.faces));nonmanifold=sum(not e.is_manifold for e in rebuilt_bm.edges);rebuilt_bm.to_mesh(obj.data);rebuilt_bm.free();assert nonmanifold==0,'Reconstructed component has nonmanifold edges';changes.append('closed_manifold_and_outward_normals_checked')
  # Surface thickness and road shape are never invented. Structural edges are dimensioned in world units.
- if category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb','ripple','drain']):
+ if not (source_refinement and recipe.get('preserve_source_front_edges')) and (category not in {'ground','grass','decal','vegetation','crowd'} or any(x in obj.name.lower() for x in ['curb','kerb','ripple','drain'])):
   edge=obj.modifiers.new('Dimensioned six-segment manufactured edge','BEVEL');edge.width=min(.003,scale*.001)/max(max(abs(v) for v in obj.scale),1e-8);edge.segments=6;edge.limit_method='ANGLE';edge.angle_limit=math.radians(35);edge.use_clamp_overlap=True;edge.harden_normals=True;bpy.ops.object.modifier_apply(modifier=edge.name);changes.append('six_segment_dimensioned_edge_geometry')
   normals=obj.modifiers.new('Area weighted manufactured normals','WEIGHTED_NORMAL');normals.keep_sharp=True
   try:bpy.ops.object.modifier_apply(modifier=normals.name)
@@ -39,7 +39,7 @@ def rebuild(obj,recipe,root):
  fidelity=source_fidelity(obj,collision) if (is_kerb or is_drain or source_refinement) else None
  if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed source-relative profile tolerance: '+str(fidelity)
  if source_refinement:assert fidelity['uv1_unambiguous_page_mismatches']==0,'Encoded UV1 page changed in source refinement'
- if source_refinement:assert max(fidelity.get('uv0_max_error') or 0,fidelity.get('uv1_max_error') or 0)<=.001,'Source UV projection is ambiguous or changed beyond0.001; hold for dedicated review'
+ if source_refinement:assert max(fidelity.get('uv0_max_error') or 0,fidelity.get('uv1_max_error') or 0)<=.001,'Source UV projection is ambiguous or changed beyond0.001; hold for dedicated review: '+str(fidelity)
  lodstats=[]
  for level,ratio in enumerate([.65,.3,.12],1):
   lod=obj.copy();lod.data=obj.data.copy();lod.name=obj.name+'__LOD'+str(level);bpy.context.collection.objects.link(lod);bpy.context.view_layer.objects.active=lod;mod=lod.modifiers.new('Runtime simplification','DECIMATE');mod.ratio=ratio;mod.use_collapse_triangulate=True
