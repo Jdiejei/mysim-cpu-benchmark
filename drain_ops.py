@@ -27,7 +27,7 @@ def drain_geometry(obj,recipe):
   for a,b in [(0,1),(1,2),(2,0)]:
    distance=math.dist(uvpoint(tri.loops[a]),uvpoint(tri.loops[b]))
    if distance>1e-6:ratios.append((linear@(old.vertices[tri.vertices[a]].co-old.vertices[tri.vertices[b]].co)).length/distance)
- assert ratios,'No resolved source UV-to-surface scale';depth=min(statistics.median(ratios)*.006,scale*.0006);down=linear.inverted()@Vector((0,0,-depth));vertices=[];faces=[];materials=[];uv_values=[[] for _ in names];tile_count=0;max_uv_span=0;maximum_weight=0;moved=0
+ assert ratios,'No resolved source UV-to-surface scale';depth=min(statistics.median(ratios)*.006,scale*.0006);source_normal=sum(((linear@(old.vertices[t.vertices[1]].co-old.vertices[t.vertices[0]].co)).cross(linear@(old.vertices[t.vertices[2]].co-old.vertices[t.vertices[0]].co)) for t in old.loop_triangles),Vector()).normalized();assert source_normal.length>.9,'Unresolved source cover normal';down=linear.inverted()@(-source_normal*depth);vertices=[];faces=[];materials=[];uv_values=[[] for _ in names];tile_count=0;max_uv_span=0;maximum_weight=0;moved=0
  def sample(point):
   x=(point[0]%1)*w-.5;y=(point[1]%1)*h-.5;ix=math.floor(x);iy=math.floor(y);fx=x-ix;fy=y-iy
   return sum(weights[((iy+dy)%h)*w+(ix+dx)%w]*(fx if dx else 1-fx)*(fy if dy else 1-fy) for dx,dy in [(0,0),(1,0),(0,1),(1,1)])
@@ -112,5 +112,6 @@ def drain_geometry(obj,recipe):
  if boundaries:
   shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
  emit('physical_slot_geometry_complete',force=True,tile_fragments=tile_count,generated_vertices=top_vertices,generated_faces=top_faces)
+ candidates=[i for i,p in enumerate(uv_values[0]) if sample((p[0]*sx+ox,p[1]*sy+oy))>.7];assert candidates,'Missing physical well review target';review_index=min(candidates,key=lambda i:((uv_values[0][i][0]*sx+ox)%1-.5)**2+((uv_values[0][i][1]*sy+oy)%1-.5)**2);obj['drain_review_target_local']=list(vertices[review_index]);obj['drain_review_span']=statistics.median(ratios)*.3;obj['drain_source_normal_world']=list(source_normal)
  obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_UV_tile_fragments']=tile_count;obj['drain_max_source_UV_span']=max_uv_span;obj['drain_local_origin_offset']=list(origin);obj['drain_geometry_seconds']=time.monotonic()-start
  return ['source_reference12_slot_regions','UV_tile_clipped_constrained_triangulation','six_ring_rounded_physical_slot_lips_and_recessed_wells','source_weathering_UV0_and_lightmap_UV1_preserved_without_repacking','local_origin_precision_recenter_with_original_world_placement_preserved','closed_source_following_backing','original_driving_collision_retained']
