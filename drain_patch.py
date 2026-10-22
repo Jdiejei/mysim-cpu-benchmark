@@ -21,8 +21,11 @@ def extract_source_tile_patch(obj,recipe):
     polygon=clip_convex(points,[(x,y),(x+1,y),(x+1,y+1),(x,y+1)])
     if polygon:
      key=(find(tri.vertices[0]),x,y);fragments[key].append((tri.index,polygon));areas[key]+=abs(area(polygon))
- assert areas,'No source grate UV patch available';key=max(areas,key=lambda k:min(areas[k],1)-max(0,areas[k]-1)*.1);vertices=[];faces=[];values=[[] for _ in mesh.uv_layers];materials=[]
- for index,polygon in fragments[key]:
+ assert areas,'No source grate UV patch available';key=max(areas,key=lambda k:min(areas[k],1)-max(0,areas[k]-1)*.1);selected=[key]
+ if recipe.get('prototype_adjacent_tiles'):
+  pairs=[(k,(k[0],k[1]+dx,k[2]+dy)) for k in areas for dx,dy in [(1,0),(0,1)] if (k[0],k[1]+dx,k[2]+dy) in areas and .999<areas[k]<1.001 and .999<areas[(k[0],k[1]+dx,k[2]+dy)]<1.001];assert pairs,'No adjacent complete UV tiles in one source component';selected=list(pairs[0]);key=selected[0]
+ vertices=[];faces=[];values=[[] for _ in mesh.uv_layers];materials=[]
+ for index,polygon in [item for tile in selected for item in fragments[tile]]:
   tri=mesh.loop_triangles[index];a,b,c=[uvpoint(i) for i in tri.loops];den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);base=len(vertices)
   for p in polygon:
    wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;blend=(wa,wb,1-wa-wb);vertices.append(tuple(sum(blend[j]*mesh.vertices[tri.vertices[j]].co[k] for j in range(3)) for k in range(3)))
@@ -33,4 +36,4 @@ def extract_source_tile_patch(obj,recipe):
   layer=patch.uv_layers.new(name=source_layer.name)
   for loop in patch.loops:layer.data[loop.index].uv=values[n][loop.vertex_index]
  for p,index in zip(patch.polygons,materials):p.material_index=index
- obj.data=patch;bpy.context.view_layer.update();return dict(scope='one_source_component_UV_tile_only',parent_procedure_id=recipe['prototype_parent_procedure_id'],parent_mesh=recipe['mesh'],source_components=len({find(i) for i in range(len(parent))}),source_UV_tile_patches=len(areas),source_max_UV_span=UVspan,selected_component=key[0],selected_tile=list(key[1:]),selected_UV_area=areas[key],reference_faces=len(faces),reference_vertices=len(vertices),full_source_mesh_upgraded=False)
+ obj.data=patch;bpy.context.view_layer.update();return dict(scope='one_source_component_UV_tile_only',parent_procedure_id=recipe['prototype_parent_procedure_id'],parent_mesh=recipe['mesh'],source_components=len({find(i) for i in range(len(parent))}),source_UV_tile_patches=len(areas),source_max_UV_span=UVspan,selected_component=key[0],selected_tile=list(key[1:]),selected_tiles=[list(k[1:]) for k in selected],selected_UV_area=sum(areas[k] for k in selected),reference_faces=len(faces),reference_vertices=len(vertices),full_source_mesh_upgraded=False)

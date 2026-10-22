@@ -41,14 +41,16 @@ def drain_geometry(obj,recipe):
    if abs(den)<1e-12:continue
    triangles.append((tri,uv,den));base=len(points);points.extend(uv);edges.extend((base+i,base+(i+1)%3) for i in range(3))
   assert triangles,'Empty cover source UV domain'
-  tx=math.floor(min(p[0] for p in points)+1e-6);ty=math.floor(min(p[1] for p in points)+1e-6);domain=[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)]
-  assert max(p[0] for p in points)<=tx+1+1e-5 and max(p[1] for p in points)<=ty+1+1e-5,'Partial cover spans multiple UV tiles'
-  for box in boxes:
-   radius=(box[3]-box[1])/2
-   for ring in range(6):
-    contour=clip_convex([(x+tx,y+ty) for x,y in capsule(*box,inset=radius*.4*ring/5,segments=16)],domain)
-    if contour:
-     base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
+  min_tx=math.floor(min(p[0] for p in points)+1e-6);min_ty=math.floor(min(p[1] for p in points)+1e-6);max_tx=math.ceil(max(p[0] for p in points)-1e-6);max_ty=math.ceil(max(p[1] for p in points)-1e-6);tile_area=(max_tx-min_tx)*(max_ty-min_ty);assert 1<=tile_area<=2,'Partial cover bounded tile limit exceeded'
+  for tx in range(min_tx,max_tx):
+   for ty in range(min_ty,max_ty):
+    domain=[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)]
+    for box in boxes:
+     radius=(box[3]-box[1])/2
+     for ring in range(6):
+      contour=clip_convex([(x+tx,y+ty) for x,y in capsule(*box,inset=radius*.4*ring/5,segments=16)],domain)
+      if contour:
+       base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
   result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False)
   def bary(p,uv,den):
    a,b,c=uv;wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;return (wa,wb,1-wa-wb)
@@ -61,7 +63,7 @@ def drain_geometry(obj,recipe):
     blend=bary(point,uv,den);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+down[k]*amount for k in range(3)))
     for layer_index,layer in enumerate(old.uv_layers):uv_values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
    faces.append((base,base+1,base+2));materials.append(tri.material_index)
-  tile_count=1;max_uv_span=1;emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
+  tile_count=tile_area;max_uv_span=max(max_tx-min_tx,max_ty-min_ty);emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
  else:
   for tri in old.loop_triangles:
    uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);coords=[tuple(old.vertices[i].co) for i in tri.vertices];layer_values=[[tuple(layer.data[i].uv) for i in tri.loops] for layer in old.uv_layers]
