@@ -36,3 +36,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           WAVE: ${{ inputs.wave }}
         run: /tmp/blender/blender --background --threads 4 --python-exit-code 1 --python execute_job.py -- ${{ matrix.group }}
+      - name: Preserve outputs even when release publication fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.group }}
+          path: results/${{ matrix.group }}/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -1,4 +1,4 @@
-import bpy,sys,os,json,time,hashlib,zipfile,subprocess,io,contextlib,shutil,traceback
+import bpy,sys,os,json,time,random,hashlib,zipfile,subprocess,io,contextlib,shutil,traceback
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from release_transport import public_download,release_upload
@@ -7,11 +7,20 @@ from rebuild_ops import rebuild,render_review
 root=Path.cwd();name=sys.argv[sys.argv.index('--')+1];job=json.loads((root/'wave-input'/f'{name}.json').read_text());sources={s['key']:s for s in json.loads((root/'sources.json').read_text())};wave=os.environ.get('WAVE','0001');tag='candidates-wave-'+wave;out=root/'results'/name;out.mkdir(parents=True,exist_ok=True);start=time.monotonic();last_publish=0;records=[];failed=[];remaining=[];loaded=None
 report={'job_id':name,'state':'RUNNING','assigned_mesh_references':len(job['recipes']),'processed':0,'failed':0,'records':records,'failures':failed,'remaining':remaining,'quality_accepted':False,'scope':job.get('scope','geometry_reconstruction_candidate'),'runtime_specs':{'cpu_count':os.cpu_count(),'RAM_GiB':round(os.sysconf('SC_PAGE_SIZE')*os.sysconf('SC_PHYS_PAGES')/2**30,1),'free_disk_GiB':round(shutil.disk_usage(root).free/2**30,1)}}
 assert os.cpu_count()>=4 and report['runtime_specs']['RAM_GiB']>=12,'Runner does not meet documented CPU/RAM requirements'
+def publish_file(path):
+    # Space release writes, then back off on transient publication failures.
+    time.sleep(random.uniform(1,12))
+    for attempt in range(7):
+        result=subprocess.run(['gh','release','upload',tag,str(path),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True)
+        if result.returncode==0:return result
+        if attempt<6:time.sleep(min(90,3*2**attempt)+random.uniform(1,8))
+    return result
+
 def checkpoint(force=False):
     global last_publish
     report.update(processed=len(records),failed=len(failed),elapsed_seconds=round(time.monotonic()-start,2),updated_at=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()));p=out/f'{name}-checkpoint.json';tmp=p.with_suffix('.tmp');tmp.write_text(json.dumps(report,indent=2));tmp.replace(p)
     if force or time.monotonic()-last_publish>300:
-        run=subprocess.run(['gh','release','upload',tag,str(p),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True);last_publish=time.monotonic()
+        run=publish_file(p);last_publish=time.monotonic()
         if run.returncode:print('CHECKPOINT_PUBLISH_WARNING',run.stderr.decode(errors='replace'),flush=True)
 def operator_progress(info):
     report['operator_progress']=info;checkpoint(False)
