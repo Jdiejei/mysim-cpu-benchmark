@@ -101,7 +101,12 @@ def drain_geometry(obj,recipe):
      for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
      assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
  emit('closing_source_following_backing',force=True,tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces))
- if not (moved and maximum_weight>.5):
+ preserved_gutter=trench and recipe.get('preserved_gutter_source_component')==5
+ if preserved_gutter:
+  assert recipe.get('prototype_component_index')==5 and recipe.get('prototype_parent_procedure_id')=='9c0fd01c5398b78cf220f753','Unsupported preserved gutter identity'
+  assert maximum_weight==0 and moved==0,'Preserved gutter unexpectedly intersects grate mask'
+  assert max(uvpoint(i)[0] for t in old.loop_triangles for i in t.loops)<.5,'Preserved gutter extends into grate panel'
+ if not (moved and maximum_weight>.5) and not preserved_gutter:
   bounds=[[min(uvpoint(i)[k] for t in old.loop_triangles for i in t.loops) for k in range(2)],[max(uvpoint(i)[k] for t in old.loop_triangles for i in t.loops) for k in range(2)]]
   emit('no_slot_source_context',force=True,transformed_UV_bounds=bounds,maximum_slot_weight=maximum_weight)
   if recipe.get('diagnose_no_slot_context'):
@@ -153,6 +158,6 @@ def drain_geometry(obj,recipe):
  if boundaries:
   shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
  emit('physical_slot_geometry_complete',force=True,tile_fragments=tile_count,generated_vertices=top_vertices,generated_faces=top_faces)
- candidates=[i for i,p in enumerate(uv_values[0]) if sample((p[0]*sx+ox,p[1]*sy+oy))>.7];assert candidates,'Missing physical well review target';review_index=min(candidates,key=lambda i:((uv_values[0][i][0]*sx+ox)%1-.5)**2+((uv_values[0][i][1]*sy+oy)%1-.5)**2);obj['drain_review_target_local']=list(vertices[review_index]);obj['drain_review_span']=statistics.median(ratios)*.3;obj['drain_source_normal_world']=list(source_normal)
+ candidates=[i for i,p in enumerate(uv_values[0]) if sample((p[0]*sx+ox,p[1]*sy+oy))>.7];assert candidates or preserved_gutter,'Missing physical well review target';candidates=candidates or list(range(len(vertices)));review_index=min(candidates,key=lambda i:((uv_values[0][i][0]*sx+ox)%1-.5)**2+((uv_values[0][i][1]*sy+oy)%1-.5)**2);obj['drain_review_target_local']=list(vertices[review_index]);obj['drain_review_span']=statistics.median(ratios)*.3;obj['drain_source_normal_world']=list(source_normal)
  obj['drain_source_UV_charts']=len(chart_groups) if recipe.get('prototype_source_tile_only') else 0;obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_UV_tile_fragments']=tile_count;obj['drain_max_source_UV_span']=max_uv_span;obj['drain_local_origin_offset']=list(origin);obj['drain_geometry_seconds']=time.monotonic()-start
- return [('source_reference_right_panel_27_slot_regions_left_gutter_preserved' if trench else 'source_reference12_slot_regions'),'UV_tile_clipped_constrained_triangulation','six_ring_rounded_physical_slot_lips_and_recessed_wells','source_weathering_UV0_and_lightmap_UV1_preserved_without_repacking','local_origin_precision_recenter_with_original_world_placement_preserved','closed_source_following_backing','original_driving_collision_retained']
+ return [('source_context_verified_gutter_only_preserved_without_invented_slots' if preserved_gutter else 'source_reference_right_panel_27_slot_regions_left_gutter_preserved' if trench else 'source_reference12_slot_regions'),'UV_tile_clipped_constrained_triangulation','six_ring_rounded_physical_slot_lips_and_recessed_wells','source_weathering_UV0_and_lightmap_UV1_preserved_without_repacking','local_origin_precision_recenter_with_original_world_placement_preserved','closed_source_following_backing','original_driving_collision_retained']
