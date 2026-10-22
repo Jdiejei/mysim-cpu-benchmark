@@ -4,7 +4,7 @@ from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 
 def source_fidelity(candidate,source,limit=1200):
- mesh=candidate.data;original=source.data;mesh.calc_loop_triangles();original.calc_loop_triangles();vertices=[candidate.matrix_world@v.co for v in mesh.vertices];triangles=[tuple(t.vertices) for t in mesh.loop_triangles];tree=BVHTree.FromPolygons(vertices,triangles,all_triangles=True);distances=[];uv_errors=[]
+ mesh=candidate.data;original=source.data;mesh.calc_loop_triangles();original.calc_loop_triangles();vertices=[candidate.matrix_world@v.co for v in mesh.vertices];triangles=[tuple(t.vertices) for t in mesh.loop_triangles];tree=BVHTree.FromPolygons(vertices,triangles,all_triangles=True);distances=[];uv_errors=[];uv1_errors=[];page_matches=[]
  source_vertices=list(original.vertices);step=max(1,math.ceil(len(source_vertices)/limit))
  for v in source_vertices[::step]:
   nearest=tree.find_nearest(source.matrix_world@v.co)
@@ -19,4 +19,9 @@ def source_fidelity(candidate,source,limit=1200):
    expected=sum((source_uv.data[i].uv for i in tri.loops),Vector((0,0)))/3;target=mesh.loop_triangles[index];corners=[vertices[i] for i in target.vertices];uvs=[Vector((*target_uv.data[i].uv,0)) for i in target.loops]
    if (corners[1]-corners[0]).cross(corners[2]-corners[0]).length_squared>1e-24:
     projected=barycentric_transform(near,*corners,*uvs);uv_errors.append((Vector((projected.x,projected.y))-expected).length)
- scale=max(max(source.dimensions),1e-8);tolerance=scale*.003;ordered=sorted(distances);return dict(scope='sampled_source_surface_and_UV_fidelity',sample_count=len(distances),source_to_candidate_max=max(distances,default=0),source_to_candidate_mean=statistics.fmean(distances) if distances else 0,source_to_candidate_p95=ordered[min(len(ordered)-1,int(len(ordered)*.95))] if ordered else 0,source_relative_tolerance=tolerance,source_profile_within_tolerance=bool(distances) and max(distances)<=tolerance,uv0_samples=len(uv_errors),uv0_mean_error=statistics.fmean(uv_errors) if uv_errors else None,uv0_max_error=max(uv_errors,default=None),UV_metrics_advisory=True,final_visual_or_Unity_acceptance=False)
+  if len(original.uv_layers)>1 and len(mesh.uv_layers)>1:
+   layer=original.uv_layers[1];target_layer=mesh.uv_layers.get(layer.name);target=mesh.loop_triangles[index];corners=[vertices[i] for i in target.vertices]
+   if target_layer and (corners[1]-corners[0]).cross(corners[2]-corners[0]).length_squared>1e-24:
+    expected=sum((layer.data[i].uv for i in tri.loops),Vector((0,0)))/3;projected=barycentric_transform(near,*corners,*[Vector((*target_layer.data[i].uv,0)) for i in target.loops]);uv1_errors.append((Vector((projected.x,projected.y))-expected).length)
+    if 1e-4<expected.y%1<1-1e-4:page_matches.append(math.floor(projected.y)==math.floor(expected.y))
+ scale=max(max(source.dimensions),1e-8);tolerance=scale*.003;ordered=sorted(distances);return dict(scope='sampled_source_surface_and_UV_fidelity',sample_count=len(distances),source_to_candidate_max=max(distances,default=0),source_to_candidate_mean=statistics.fmean(distances) if distances else 0,source_to_candidate_p95=ordered[min(len(ordered)-1,int(len(ordered)*.95))] if ordered else 0,source_relative_tolerance=tolerance,source_profile_within_tolerance=bool(distances) and max(distances)<=tolerance,uv0_samples=len(uv_errors),uv0_mean_error=statistics.fmean(uv_errors) if uv_errors else None,uv0_max_error=max(uv_errors,default=None),uv1_samples=len(uv1_errors),uv1_mean_error=statistics.fmean(uv1_errors) if uv1_errors else None,uv1_max_error=max(uv1_errors,default=None),uv1_unambiguous_page_samples=len(page_matches),uv1_unambiguous_page_mismatches=sum(not v for v in page_matches),lightmap_array_appearance_validated=False,UV_metrics_advisory=True,final_visual_or_Unity_acceptance=False)
