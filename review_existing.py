@@ -20,7 +20,20 @@ for item in job['candidates']:
   for obj in objects:bpy.context.scene.collection.objects.link(obj)
   bpy.context.view_layer.update()
   obj=next(o for o in objects if o.get('rebuild_procedure_id')==item['procedure_id']);source=next(o for o in objects if o.name==obj['collision_reference']);metrics=source_fidelity(obj,source);assert metrics['source_profile_within_tolerance'],'Candidate source profile exceeds source-relative distance threshold:'+json.dumps(metrics)
-  images=render_review(obj,[o for o in objects if o!=obj],out/(item['procedure_id']+'.blend'),detail_only=True);image=bpy.data.images.load(images[-1],check_existing=False);pixels=image.pixels[:];stride=max(4,(image.size[0]*image.size[1]//4096)*4);channels=[[pixels[i+c] for i in range(0,len(pixels)-3,stride)] for c in range(3)];variance=sum(sum(v*v for v in channel)/len(channel)-(sum(channel)/len(channel))**2 for channel in channels);bpy.data.images.remove(image);assert variance>1e-7,'Close-up render is blank or lacks measurable image variation';record=dict(render_pixel_variance=variance,procedure_id=item['procedure_id'],mesh=item['mesh'],source_candidate=item,source_fidelity=metrics,review_images=images,scope='existing_candidate_quality_review',geometry_unchanged=True,quality_accepted=False,final_game_accepted=False);records.append(record);(out/(item['procedure_id']+'-quality.json')).write_text(json.dumps(record))
+  comparison_images=[];material_review=None
+  if item.get('enhanced_texture'):
+   spec=item['enhanced_texture'];texture=root/spec['path'];assert hashlib.sha256(texture.read_bytes()).hexdigest()==spec['sha256'],'Enhanced texture SHA mismatch'
+   before_geometry=[tuple(v.co) for v in obj.data.vertices];before_uvs=[[tuple(d.uv) for d in u.data] for u in obj.data.uv_layers]
+   comparison_images=render_review(obj,[o for o in objects if o!=obj],out/(item['procedure_id']+'-original.blend'),detail_only=True)
+   replacement=bpy.data.images.load(str(texture),check_existing=False);replaced=0
+   for mat in obj.data.materials:
+    if mat and mat.use_nodes:
+     for node in mat.node_tree.nodes:
+      if node.type=='TEX_IMAGE' and node.image and 'gnd_base_drain_01' in (node.image.name+' '+node.image.filepath):node.image=replacement;replaced+=1
+   assert replaced>0,'Exact source texture image node not found'
+   assert before_geometry==[tuple(v.co) for v in obj.data.vertices] and before_uvs==[[tuple(d.uv) for d in u.data] for u in obj.data.uv_layers],'Read-only review changed geometry or UVs'
+   material_review=dict(texture_sha256=spec['sha256'],replaced_exact_source_nodes=replaced,saved_candidate_modified=False,geometry_and_UVs_unchanged=True)
+  images=render_review(obj,[o for o in objects if o!=obj],out/(item['procedure_id']+'.blend'),detail_only=True);image=bpy.data.images.load(images[-1],check_existing=False);pixels=image.pixels[:];stride=max(4,(image.size[0]*image.size[1]//4096)*4);channels=[[pixels[i+c] for i in range(0,len(pixels)-3,stride)] for c in range(3)];variance=sum(sum(v*v for v in channel)/len(channel)-(sum(channel)/len(channel))**2 for channel in channels);bpy.data.images.remove(image);assert variance>1e-7,'Close-up render is blank or lacks measurable image variation';images=comparison_images+images;record=dict(material_review=material_review,render_pixel_variance=variance,procedure_id=item['procedure_id'],mesh=item['mesh'],source_candidate=item,source_fidelity=metrics,review_images=images,scope='existing_candidate_quality_review',geometry_unchanged=True,quality_accepted=False,final_game_accepted=False);records.append(record);(out/(item['procedure_id']+'-quality.json')).write_text(json.dumps(record))
  except Exception as e:failures.append(dict(procedure_id=item['procedure_id'],mesh=item['mesh'],error=str(e)))
  publish()
 report['state']='NEEDS_REPAIR' if failures else 'COMPLETE';publish();manifest={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.iterdir()};(out/'SHA256SUMS.json').write_text(json.dumps(manifest));archive=root/(name+'-'+os.environ['GITHUB_RUN_ID']+'.zip')
