@@ -13,7 +13,7 @@ def checkpoint(force=False):
         run=subprocess.run(['gh','release','upload',tag,str(p),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True);last_publish=time.monotonic()
         if run.returncode:print('CHECKPOINT_PUBLISH_WARNING',run.stderr.decode(errors='replace'),flush=True)
 def operator_progress(info):
-    report['operator_progress']=info;checkpoint(True)
+    report['operator_progress']=info;checkpoint(time.monotonic()-last_publish>=20)
 checkpoint(True);import_patch.install()
 for index,recipe in enumerate(job['recipes']):
     if time.monotonic()-start>4.5*3600:remaining.extend(r['procedure_id'] for r in job['recipes'][index:]);break
