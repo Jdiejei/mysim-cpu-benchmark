@@ -33,32 +33,62 @@ def drain_geometry(obj,recipe):
   return sum(weights[((iy+dy)%h)*w+(ix+dx)%w]*(fx if dx else 1-fx)*(fy if dy else 1-fy) for dx,dy in [(0,0),(1,0),(0,1),(1,1)])
  # Blender4.5 CDT API verified against official mathutils_geometry.cc.
  # Tile clipping avoids raster subdivision of long/repeated source UV spans.
- for tri in old.loop_triangles:
-  uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);coords=[tuple(old.vertices[i].co) for i in tri.vertices];layer_values=[[tuple(layer.data[i].uv) for i in tri.loops] for layer in old.uv_layers]
-  if abs(den)<1e-12:
-   base=len(vertices)
-   for j in range(3):
-    vertices.append(tuple(coords[j][k]-origin[k] for k in range(3)))
-    for layer_index in range(len(names)):uv_values[layer_index].append(layer_values[layer_index][j])
-   faces.append((base,base+1,base+2));materials.append(tri.material_index);continue
-  span_u=max(p[0] for p in uv)-min(p[0] for p in uv);span_v=max(p[1] for p in uv)-min(p[1] for p in uv);max_uv_span=max(max_uv_span,span_u,span_v);assert (math.ceil(span_u)+1)*(math.ceil(span_v)+1)<20000,'Source UV tile bounding budget exceeded:'+str((span_u,span_v))
-  for tx in range(math.floor(min(p[0] for p in uv)),math.floor(max(p[0] for p in uv))+1):
-   for ty in range(math.floor(min(p[1] for p in uv)),math.floor(max(p[1] for p in uv))+1):
-    domain=clip_convex(uv,[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)])
-    if not domain:continue
-    tile_count+=1;emit('building_physical_slot_tiles',tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces));assert time.monotonic()-start<4*3600,'Single-grate prototype compute budget exceeded';assert tile_count<=10000,'Source grate tile-fragment budget exceeded';domain=[(x-tx,y-ty) for x,y in domain];points=list(domain);edges=[(i,(i+1)%len(points)) for i in range(len(points))]
-    for box in boxes:
-     radius=(box[3]-box[1])/2
-     for ring in range(6):
-      contour=clip_convex(capsule(*box,inset=radius*.4*ring/5,segments=16),domain)
-      if not contour:continue
-      base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
-    result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False);base=len(vertices)
-    for point in result[0]:
-     p=(point.x+tx,point.y+ty);wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;blend=(wa,wb,1-wa-wb);amount=sample(p);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*coords[j][k] for j in range(3))-origin[k]+down[k]*amount for k in range(3)))
-     for layer_index in range(len(names)):uv_values[layer_index].append(tuple(sum(blend[j]*layer_values[layer_index][j][k] for j in range(3)) for k in range(2)))
-    for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
-    assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
+ if recipe.get('prototype_source_tile_only'):
+  # One CDT across the source cover keeps every source triangle seam conforming.
+  triangles=[];points=[];edges=[]
+  for tri in old.loop_triangles:
+   uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
+   if abs(den)<1e-12:continue
+   triangles.append((tri,uv,den));base=len(points);points.extend(uv);edges.extend((base+i,base+(i+1)%3) for i in range(3))
+  assert triangles,'Empty cover source UV domain'
+  tx=math.floor(min(p[0] for p in points)+1e-6);ty=math.floor(min(p[1] for p in points)+1e-6);domain=[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)]
+  assert max(p[0] for p in points)<=tx+1+1e-5 and max(p[1] for p in points)<=ty+1+1e-5,'Partial cover spans multiple UV tiles'
+  for box in boxes:
+   radius=(box[3]-box[1])/2
+   for ring in range(6):
+    contour=clip_convex([(x+tx,y+ty) for x,y in capsule(*box,inset=radius*.4*ring/5,segments=16)],domain)
+    if contour:
+     base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
+  result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False)
+  def bary(p,uv,den):
+   a,b,c=uv;wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;return (wa,wb,1-wa-wb)
+  for face in result[2]:
+   uvface=[tuple(result[0][i]) for i in face];center=tuple(sum(p[k] for p in uvface)/3 for k in range(2));matches=[t for t in triangles if min(bary(center,t[1],t[2]))>=-1e-6]
+   if not matches:continue
+   assert len(matches)==1 or max(min(bary(center,t[1],t[2])) for t in matches)<1e-5,'Overlapping source UV triangles in cover'
+   tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));base=len(vertices)
+   for point in uvface:
+    blend=bary(point,uv,den);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+down[k]*amount for k in range(3)))
+    for layer_index,layer in enumerate(old.uv_layers):uv_values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
+   faces.append((base,base+1,base+2));materials.append(tri.material_index)
+  tile_count=1;max_uv_span=1;emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
+ else:
+  for tri in old.loop_triangles:
+   uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);coords=[tuple(old.vertices[i].co) for i in tri.vertices];layer_values=[[tuple(layer.data[i].uv) for i in tri.loops] for layer in old.uv_layers]
+   if abs(den)<1e-12:
+    base=len(vertices)
+    for j in range(3):
+     vertices.append(tuple(coords[j][k]-origin[k] for k in range(3)))
+     for layer_index in range(len(names)):uv_values[layer_index].append(layer_values[layer_index][j])
+    faces.append((base,base+1,base+2));materials.append(tri.material_index);continue
+   span_u=max(p[0] for p in uv)-min(p[0] for p in uv);span_v=max(p[1] for p in uv)-min(p[1] for p in uv);max_uv_span=max(max_uv_span,span_u,span_v);assert (math.ceil(span_u)+1)*(math.ceil(span_v)+1)<20000,'Source UV tile bounding budget exceeded:'+str((span_u,span_v))
+   for tx in range(math.floor(min(p[0] for p in uv)),math.floor(max(p[0] for p in uv))+1):
+    for ty in range(math.floor(min(p[1] for p in uv)),math.floor(max(p[1] for p in uv))+1):
+     domain=clip_convex(uv,[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)])
+     if not domain:continue
+     tile_count+=1;emit('building_physical_slot_tiles',tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces));assert time.monotonic()-start<4*3600,'Single-grate prototype compute budget exceeded';assert tile_count<=10000,'Source grate tile-fragment budget exceeded';domain=[(x-tx,y-ty) for x,y in domain];points=list(domain);edges=[(i,(i+1)%len(points)) for i in range(len(points))]
+     for box in boxes:
+      radius=(box[3]-box[1])/2
+      for ring in range(6):
+       contour=clip_convex(capsule(*box,inset=radius*.4*ring/5,segments=16),domain)
+       if not contour:continue
+       base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
+     result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False);base=len(vertices)
+     for point in result[0]:
+      p=(point.x+tx,point.y+ty);wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;blend=(wa,wb,1-wa-wb);amount=sample(p);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*coords[j][k] for j in range(3))-origin[k]+down[k]*amount for k in range(3)))
+      for layer_index in range(len(names)):uv_values[layer_index].append(tuple(sum(blend[j]*layer_values[layer_index][j][k] for j in range(3)) for k in range(2)))
+     for face in result[2]:faces.append(tuple(base+i for i in face));materials.append(tri.material_index)
+     assert len(vertices)<600000 and len(faces)<1000000,'Constrained grate geometry budget exceeded; no automatic quality downgrade'
  emit('closing_source_following_backing',force=True,tile_fragments=tile_count,generated_vertices=len(vertices),generated_faces=len(faces))
  assert moved and maximum_weight>.5,'No physical slot recesses resolved';mesh=bpy.data.meshes.new(old.name+'__physical_grate');mesh.from_pydata(vertices,[],faces);mesh.update()
  for layer_index,name in enumerate(names):
@@ -78,7 +108,7 @@ def drain_geometry(obj,recipe):
     factor=(v.co-a.co).dot(direction)/length2
     if tolerance/math.sqrt(length2)<factor<1-tolerance/math.sqrt(length2) and (a.co+direction*factor-v.co).length<tolerance:
      new_edge,new_vertex=bmesh.utils.edge_split(current,a,factor);new_vertex.co=v.co;pending.extend([current,new_edge]);splits+=1;assert splits<20000,'Boundary conformity split budget exceeded';break
- bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);emit('conforming_source_triangle_seams',force=True,boundary_T_junction_splits=splits,boundary_edges=boundaries);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(mesh);bm.free();mesh.update()
+ bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);excess=sum(len(e.link_faces)>2 for e in bm.edges);emit('top_surface_edge_incidence',force=True,edges=len(bm.edges),vertices=len(bm.verts),faces=len(bm.faces),boundary_edges=boundaries,excess_incidence_edges=excess);assert excess==0,'Top surface has overlapping or multiply incident faces';emit('conforming_source_triangle_seams',force=True,boundary_T_junction_splits=splits,boundary_edges=boundaries);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(mesh);bm.free();mesh.update()
  if boundaries:
   shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
  emit('physical_slot_geometry_complete',force=True,tile_fragments=tile_count,generated_vertices=top_vertices,generated_faces=top_faces)
