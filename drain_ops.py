@@ -3,6 +3,7 @@ from pathlib import Path
 from mathutils import Vector,Matrix
 from mathutils.geometry import delaunay_2d_cdt
 from drain_uv_geometry import area,clip_convex,capsule
+from drain_uv_charts import partition_uv_charts
 
 def drain_geometry(obj,recipe):
  start=time.monotonic();last_emit=0;callback=recipe.get('_operator_progress_callback')
@@ -35,35 +36,37 @@ def drain_geometry(obj,recipe):
  # Tile clipping avoids raster subdivision of long/repeated source UV spans.
  if recipe.get('prototype_source_tile_only'):
   # One CDT across the source cover keeps every source triangle seam conforming.
-  triangles=[];points=[];edges=[]
-  for tri in old.loop_triangles:
-   uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
-   if abs(den)<1e-12:continue
-   triangles.append((tri,uv,den));base=len(points);points.extend(uv);edges.extend((base+i,base+(i+1)%3) for i in range(3))
-  assert triangles,'Empty cover source UV domain'
-  min_tx=math.floor(min(p[0] for p in points)+1e-6);min_ty=math.floor(min(p[1] for p in points)+1e-6);max_tx=math.ceil(max(p[0] for p in points)-1e-6);max_ty=math.ceil(max(p[1] for p in points)-1e-6);tile_area=(max_tx-min_tx)*(max_ty-min_ty);assert 1<=tile_area<=64,'Component bounded tile limit exceeded'
-  for tx in range(min_tx,max_tx):
-   for ty in range(min_ty,max_ty):
-    domain=[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)]
-    for box in boxes:
-     radius=(box[3]-box[1])/2
-     for ring in range(6):
-      contour=clip_convex([(x+tx,y+ty) for x,y in capsule(*box,inset=radius*.4*ring/5,segments=16)],domain)
-      if contour:
-       base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
-  result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False)
-  def bary(p,uv,den):
-   a,b,c=uv;wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;return (wa,wb,1-wa-wb)
-  for face in result[2]:
-   uvface=[tuple(result[0][i]) for i in face];center=tuple(sum(p[k] for p in uvface)/3 for k in range(2));matches=[t for t in triangles if min(bary(center,t[1],t[2]))>=-1e-6]
-   if not matches:continue
-   assert len(matches)==1 or max(min(bary(center,t[1],t[2])) for t in matches)<1e-5,'Overlapping source UV triangles in cover'
-   tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));base=len(vertices)
-   for point in uvface:
-    blend=bary(point,uv,den);normal_local=sum((old.vertices[tri.vertices[j]].normal*blend[j] for j in range(3)),Vector()).normalized();normal_world=(linear.inverted().transposed()@normal_local).normalized();point_down=linear.inverted()@(-normal_world*depth);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+point_down[k]*amount for k in range(3)))
-    for layer_index,layer in enumerate(old.uv_layers):uv_values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
-   faces.append((base,base+1,base+2));materials.append(tri.material_index);assert len(vertices)<600000 and len(faces)<1000000,'Component geometry budget exceeded'
-  tile_count=tile_area;max_uv_span=max(max_tx-min_tx,max_ty-min_ty);emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
+  chart_groups=partition_uv_charts(old.loop_triangles,uvpoint);emit('source_uv_chart_partition',force=True,chart_count=len(chart_groups))
+  for chart in chart_groups:
+   triangles=[];points=[];edges=[]
+   for tri in chart:
+    uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
+    if abs(den)<1e-12:continue
+    triangles.append((tri,uv,den));base=len(points);points.extend(uv);edges.extend((base+i,base+(i+1)%3) for i in range(3))
+   assert triangles,'Empty cover source UV domain'
+   min_tx=math.floor(min(p[0] for p in points)+1e-6);min_ty=math.floor(min(p[1] for p in points)+1e-6);max_tx=math.ceil(max(p[0] for p in points)-1e-6);max_ty=math.ceil(max(p[1] for p in points)-1e-6);tile_area=(max_tx-min_tx)*(max_ty-min_ty);assert 1<=tile_area<=64,'Component bounded tile limit exceeded'
+   for tx in range(min_tx,max_tx):
+    for ty in range(min_ty,max_ty):
+     domain=[(tx,ty),(tx+1,ty),(tx+1,ty+1),(tx,ty+1)]
+     for box in boxes:
+      radius=(box[3]-box[1])/2
+      for ring in range(6):
+       contour=clip_convex([(x+tx,y+ty) for x,y in capsule(*box,inset=radius*.4*ring/5,segments=16)],domain)
+       if contour:
+        base=len(points);points.extend(contour);edges.extend((base+i,base+(i+1)%len(contour)) for i in range(len(contour)))
+   result=delaunay_2d_cdt([Vector(p) for p in points],edges,[],0,1e-8,False)
+   def bary(p,uv,den):
+    a,b,c=uv;wa=((b[1]-c[1])*(p[0]-c[0])+(c[0]-b[0])*(p[1]-c[1]))/den;wb=((c[1]-a[1])*(p[0]-c[0])+(a[0]-c[0])*(p[1]-c[1]))/den;return (wa,wb,1-wa-wb)
+   for face in result[2]:
+    uvface=[tuple(result[0][i]) for i in face];center=tuple(sum(p[k] for p in uvface)/3 for k in range(2));matches=[t for t in triangles if min(bary(center,t[1],t[2]))>=-1e-6]
+    if not matches:continue
+    assert len(matches)==1 or max(min(bary(center,t[1],t[2])) for t in matches)<1e-5,'Overlapping source UV triangles in cover'
+    tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));base=len(vertices)
+    for point in uvface:
+     blend=bary(point,uv,den);normal_local=sum((old.vertices[tri.vertices[j]].normal*blend[j] for j in range(3)),Vector()).normalized();normal_world=(linear.inverted().transposed()@normal_local).normalized();point_down=linear.inverted()@(-normal_world*depth);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+point_down[k]*amount for k in range(3)))
+     for layer_index,layer in enumerate(old.uv_layers):uv_values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
+    faces.append((base,base+1,base+2));materials.append(tri.material_index);assert len(vertices)<600000 and len(faces)<1000000,'Component geometry budget exceeded'
+   tile_count+=tile_area;max_uv_span=max(max_uv_span,max_tx-min_tx,max_ty-min_ty);emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
  else:
   for tri in old.loop_triangles:
    uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1]);coords=[tuple(old.vertices[i].co) for i in tri.vertices];layer_values=[[tuple(layer.data[i].uv) for i in tri.loops] for layer in old.uv_layers]
@@ -133,5 +136,5 @@ def drain_geometry(obj,recipe):
   shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
  emit('physical_slot_geometry_complete',force=True,tile_fragments=tile_count,generated_vertices=top_vertices,generated_faces=top_faces)
  candidates=[i for i,p in enumerate(uv_values[0]) if sample((p[0]*sx+ox,p[1]*sy+oy))>.7];assert candidates,'Missing physical well review target';review_index=min(candidates,key=lambda i:((uv_values[0][i][0]*sx+ox)%1-.5)**2+((uv_values[0][i][1]*sy+oy)%1-.5)**2);obj['drain_review_target_local']=list(vertices[review_index]);obj['drain_review_span']=statistics.median(ratios)*.3;obj['drain_source_normal_world']=list(source_normal)
- obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_UV_tile_fragments']=tile_count;obj['drain_max_source_UV_span']=max_uv_span;obj['drain_local_origin_offset']=list(origin);obj['drain_geometry_seconds']=time.monotonic()-start
+ obj['drain_source_UV_charts']=len(chart_groups) if recipe.get('prototype_source_tile_only') else 0;obj['drain_relative_slot_depth']=depth;obj['drain_displaced_vertices']=moved;obj['drain_top_vertices']=top_vertices;obj['drain_top_faces']=top_faces;obj['drain_UV_tile_fragments']=tile_count;obj['drain_max_source_UV_span']=max_uv_span;obj['drain_local_origin_offset']=list(origin);obj['drain_geometry_seconds']=time.monotonic()-start
  return ['source_reference12_slot_regions','UV_tile_clipped_constrained_triangulation','six_ring_rounded_physical_slot_lips_and_recessed_wells','source_weathering_UV0_and_lightmap_UV1_preserved_without_repacking','local_origin_precision_recenter_with_original_world_placement_preserved','closed_source_following_backing','original_driving_collision_retained']
