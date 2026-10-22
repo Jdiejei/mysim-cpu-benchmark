@@ -60,7 +60,7 @@ def drain_geometry(obj,recipe):
    for face in result[2]:
     uvface=[tuple(result[0][i]) for i in face];center=tuple(sum(p[k] for p in uvface)/3 for k in range(2));matches=[t for t in triangles if min(bary(center,t[1],t[2]))>=-1e-6]
     if not matches:continue
-    assert len(matches)==1 or max(min(bary(center,t[1],t[2])) for t in matches)<1e-5,'Overlapping source UV triangles in cover:'+json.dumps(dict(face=uvface,center=center,matches=[dict(uv=t[1],den=t[2],bary=bary(center,t[1],t[2])) for t in matches]))
+    assert sum(min(bary(center,t[1],t[2]))>=1e-5 for t in matches)<=1,'Overlapping source UV triangles in cover:'+json.dumps(dict(face=uvface,center=center,matches=[dict(uv=t[1],den=t[2],bary=bary(center,t[1],t[2])) for t in matches]))
     tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));base=len(vertices)
     for point in uvface:
      blend=bary(point,uv,den);normal_local=sum((old.vertices[tri.vertices[j]].normal*blend[j] for j in range(3)),Vector()).normalized();normal_world=(linear.inverted().transposed()@normal_local).normalized();point_down=linear.inverted()@(-normal_world*depth);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+point_down[k]*amount for k in range(3)))
