@@ -65,7 +65,20 @@ def drain_geometry(obj,recipe):
   layer=mesh.uv_layers.new(name=name)
   for loop in mesh.loops:layer.data[loop.index].uv=uv_values[layer_index][loop.vertex_index]
  for poly,material in zip(mesh.polygons,materials):poly.material_index=material
- obj.data=mesh;obj.matrix_world=matrix@Matrix.Translation(origin);bpy.context.view_layer.update();bm=bmesh.new();bm.from_mesh(mesh);tolerance=max(max(abs(v) for v in obj.dimensions)/max(linear.col[i].length for i in range(3))*2e-7,1e-7);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(mesh);bm.free();mesh.update()
+ obj.data=mesh;obj.matrix_world=matrix@Matrix.Translation(origin);bpy.context.view_layer.update();bm=bmesh.new();bm.from_mesh(mesh);tolerance=max(max(abs(v) for v in obj.dimensions)/max(linear.col[i].length for i in range(3))*2e-7,1e-7);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=tolerance*.1);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));# Adjacent independently constrained source triangles can introduce boundary T junctions.
+ boundary_vertices=list({v for e in bm.edges if e.is_boundary for v in e.verts});splits=0
+ for edge in list(bm.edges):
+  if not edge.is_valid or not edge.is_boundary:continue
+  pending=[edge]
+  while pending:
+   current=pending.pop();a,b=current.verts;direction=b.co-a.co;length2=direction.length_squared
+   if length2<=tolerance*tolerance:continue
+   for v in boundary_vertices:
+    if v in current.verts:continue
+    factor=(v.co-a.co).dot(direction)/length2
+    if tolerance/math.sqrt(length2)<factor<1-tolerance/math.sqrt(length2) and (a.co+direction*factor-v.co).length<tolerance:
+     new_edge,new_vertex=bmesh.utils.edge_split(current,a,factor);new_vertex.co=v.co;pending.extend([current,new_edge]);splits+=1;assert splits<20000,'Boundary conformity split budget exceeded';break
+ bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=tolerance);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));boundaries=sum(e.is_boundary for e in bm.edges);emit('conforming_source_triangle_seams',force=True,boundary_T_junction_splits=splits,boundary_edges=boundaries);top_vertices=len(bm.verts);top_faces=len(bm.faces);bm.to_mesh(mesh);bm.free();mesh.update()
  if boundaries:
   shell=obj.modifiers.new('Closed physical grate backing','SOLIDIFY');shell.solidify_mode='NON_MANIFOLD';shell.nonmanifold_thickness_mode='CONSTRAINTS';shell.thickness=depth*.5/max(linear.col[i].length for i in range(3));shell.offset=-1;shell.use_even_offset=True;shell.use_quality_normals=True;bpy.context.view_layer.objects.active=obj;bpy.ops.object.modifier_apply(modifier=shell.name)
  emit('physical_slot_geometry_complete',force=True,tile_fragments=tile_count,generated_vertices=top_vertices,generated_faces=top_faces)
