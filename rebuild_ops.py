@@ -30,7 +30,7 @@ def rebuild(obj,recipe,root):
   if grass:extras.append(grass);changes.append('curved_blade_cluster_geometry')
  assert all(math.isfinite(x) for v in obj.data.vertices for x in v.co),'Nonfinite mesh'
  assert len(obj.data.uv_layers)==before['uv_layers'],'UV layers lost'
- delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));assert delta<=max(.01,scale*.002),f'Silhouette bounds changed excessively: before={before["bounds"]}, after={list(obj.dimensions)}, delta={delta}'
+ delta=max(abs(obj.dimensions[i]-before['bounds'][i]) for i in range(3));callback=recipe.get('_operator_progress_callback');callback(dict(stage='bounds_diagnostic',before_bounds=before['bounds'],after_bounds=list(obj.dimensions),delta=delta,relative_depth=obj.get('drain_relative_slot_depth'),source_normal=list(obj.get('drain_source_normal_world',[])))) if callback else None;assert delta<=max(.01,scale*.002),f'Silhouette bounds changed excessively: before={before["bounds"]}, after={list(obj.dimensions)}, delta={delta}'
  for poly in obj.data.polygons:assert 0<=poly.material_index<max(1,len(obj.data.materials)),'Material index out of range'
  fidelity=source_fidelity(obj,collision) if (is_kerb or is_drain) else None
  if fidelity:assert fidelity['source_profile_within_tolerance'],'Source surface distances exceed source-relative profile tolerance: '+str(fidelity)
