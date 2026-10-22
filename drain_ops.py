@@ -38,7 +38,7 @@ def drain_geometry(obj,recipe):
   # One CDT across the source cover keeps every source triangle seam conforming.
   chart_groups=partition_uv_charts(old.loop_triangles,uvpoint);emit('source_uv_chart_partition',force=True,chart_count=len(chart_groups))
   for chart in chart_groups:
-   triangles=[];points=[];edges=[]
+   triangles=[];points=[];edges=[];chart_vertex_cache={}
    for tri in chart:
     uv=[uvpoint(i) for i in tri.loops];a,b,c=uv;den=(b[1]-c[1])*(a[0]-c[0])+(c[0]-b[0])*(a[1]-c[1])
     if abs(den)<1e-12:continue
@@ -64,11 +64,14 @@ def drain_geometry(obj,recipe):
     uvface=[tuple(result[0][i]) for i in face];center=tuple(sum(p[k] for p in uvface)/3 for k in range(2));matches=[t for t in triangles if min(bary(center,t[1],t[2]))>=-1e-6]
     if not matches:continue
     assert sum(min(bary(center,t[1],t[2]))>=1e-5 for t in matches)<=1,'Overlapping source UV triangles in cover:'+json.dumps(dict(face=uvface,center=center,matches=[dict(uv=t[1],den=t[2],bary=bary(center,t[1],t[2])) for t in matches]))
-    tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));base=len(vertices)
+    tri,uv,den=max(matches,key=lambda t:min(bary(center,t[1],t[2])));face_indices=[]
     for point in uvface:
-     blend=bary(point,uv,den);normal_local=sum((old.vertices[tri.vertices[j]].normal*blend[j] for j in range(3)),Vector()).normalized();normal_world=(linear.inverted().transposed()@normal_local).normalized();point_down=linear.inverted()@(-normal_world*depth);amount=sample(point);maximum_weight=max(maximum_weight,amount);moved+=amount>1e-6;vertices.append(tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+point_down[k]*amount for k in range(3)))
-     for layer_index,layer in enumerate(old.uv_layers):uv_values[layer_index].append(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)))
-    faces.append((base,base+1,base+2));materials.append(tri.material_index);assert len(vertices)<600000 and len(faces)<1000000,'Component geometry budget exceeded'
+     blend=bary(point,uv,den);normal_local=sum((old.vertices[tri.vertices[j]].normal*blend[j] for j in range(3)),Vector()).normalized();normal_world=(linear.inverted().transposed()@normal_local).normalized();point_down=linear.inverted()@(-normal_world*depth);amount=sample(point);maximum_weight=max(maximum_weight,amount);position=tuple(sum(blend[j]*old.vertices[tri.vertices[j]].co[k] for j in range(3))-origin[k]+point_down[k]*amount for k in range(3));layers=tuple(tuple(sum(blend[j]*layer.data[tri.loops[j]].uv[k] for j in range(3)) for k in range(2)) for layer in old.uv_layers);vertex_key=(position,layers)
+     if vertex_key not in chart_vertex_cache:
+      chart_vertex_cache[vertex_key]=len(vertices);vertices.append(position);moved+=amount>1e-6
+      for layer_index,value in enumerate(layers):uv_values[layer_index].append(value)
+     face_indices.append(chart_vertex_cache[vertex_key])
+    faces.append(tuple(face_indices));materials.append(tri.material_index);assert len(vertices)<600000 and len(faces)<1000000,'Component geometry budget exceeded'
    tile_count+=tile_area;max_uv_span=max(max_uv_span,max_tx-min_tx,max_ty-min_ty);emit('globally_constrained_source_cover',force=True,generated_vertices=len(vertices),generated_faces=len(faces),source_triangles=len(triangles))
  else:
   for tri in old.loop_triangles:
