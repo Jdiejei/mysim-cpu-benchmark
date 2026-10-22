@@ -1,6 +1,7 @@
 import bpy,sys,os,json,time,hashlib,zipfile,subprocess,io,contextlib,shutil,traceback
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parent))
+from release_transport import public_download,release_upload
 import import_patch
 from rebuild_ops import rebuild,render_review
 root=Path.cwd();name=sys.argv[sys.argv.index('--')+1];job=json.loads((root/'wave-input'/f'{name}.json').read_text());sources={s['key']:s for s in json.loads((root/'sources.json').read_text())};wave=os.environ.get('WAVE','0001');tag='candidates-wave-'+wave;out=root/'results'/name;out.mkdir(parents=True,exist_ok=True);start=time.monotonic();last_publish=0;records=[];failed=[];remaining=[];loaded=None
@@ -13,7 +14,7 @@ def checkpoint(force=False):
         run=subprocess.run(['gh','release','upload',tag,str(p),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True);last_publish=time.monotonic()
         if run.returncode:print('CHECKPOINT_PUBLISH_WARNING',run.stderr.decode(errors='replace'),flush=True)
 def operator_progress(info):
-    report['operator_progress']=info;checkpoint(time.monotonic()-last_publish>=20)
+    report['operator_progress']=info;checkpoint(False)
 checkpoint(True);import_patch.install()
 for index,recipe in enumerate(job['recipes']):
     if time.monotonic()-start>4.5*3600:remaining.extend(r['procedure_id'] for r in job['recipes'][index:]);break
@@ -21,7 +22,7 @@ for index,recipe in enumerate(job['recipes']):
         key=recipe['source_key'];s=sources[key]
         if key!=loaded:
             folder=root/'cache';folder.mkdir(exist_ok=True);archive=folder/s['archive']
-            if not archive.exists():subprocess.run(['gh','release','download','inputs-v1','--repo',os.environ.get('INPUT_REPOSITORY','Shashanksaraswat123939/mysim-cpu-benchmark'),'--pattern',s['archive'],'--dir',str(folder)],check=True)
+            if not archive.exists():public_download(os.environ.get('INPUT_REPOSITORY','Shashanksaraswat123939/mysim-cpu-benchmark'),'inputs-v1',s['archive'],archive)
             with zipfile.ZipFile(archive) as z:data=z.read('source.fbx')
             assert hashlib.sha256(data).hexdigest()==s['sha256'],'Input source SHA mismatch';local=folder/'source.fbx';local.write_bytes(data);del data;bpy.ops.wm.read_factory_settings(use_empty=True);log=io.StringIO()
             with contextlib.redirect_stdout(log),contextlib.redirect_stderr(log):bpy.ops.import_scene.fbx(filepath=str(local),use_anim=False)
@@ -39,12 +40,12 @@ for index,recipe in enumerate(job['recipes']):
         # Release added grass geometry after saving this item; its output is already durable.
         for detail in extra:bpy.data.objects.remove(detail,do_unlink=True)
     except Exception as e:failed.append({'procedure_id':recipe['procedure_id'],'mesh':recipe['mesh'],'error':str(e)});traceback.print_exc()
-    checkpoint(True);print('MESH_PROGRESS',len(records),len(failed),len(job['recipes']),flush=True)
+    checkpoint(False);print('MESH_PROGRESS',len(records),len(failed),len(job['recipes']),flush=True)
 report['state']='COMPLETE' if not remaining and not failed else 'PARTIAL' if remaining else 'NEEDS_REPAIR';checkpoint(True)
 manifest={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.iterdir() if p.suffix in {'.blend','.png'}};(out/'SHA256SUMS.json').write_text(json.dumps(manifest,indent=2));archive=root/f'{name}-{os.environ.get("GITHUB_RUN_ID","local")}.zip'
 with zipfile.ZipFile(archive,'w',compression=zipfile.ZIP_DEFLATED,compresslevel=1) as z:
     for p in out.iterdir():z.write(p,p.name)
-run=subprocess.run(['gh','release','upload',tag,str(archive),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],capture_output=True)
+run=release_upload(['gh','release','upload',tag,str(archive),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],mandatory=True)
 if run.returncode:raise RuntimeError('Output upload failed: '+run.stderr.decode(errors='replace'))
 print('JOB_RESULT',json.dumps({k:v for k,v in report.items() if k not in ['records','failures','import_repairs']}),flush=True)
 

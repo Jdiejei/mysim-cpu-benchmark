@@ -4,14 +4,21 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform
 sys.path.insert(0,str(Path(__file__).resolve().parent))
+from release_transport import public_download,release_upload
 import import_patch
 from rebuild_ops import render_review
-root=Path.cwd();name=sys.argv[sys.argv.index('--')+1];manifest=json.loads((root/'wave-input'/f'{name}.json').read_text());out=root/'results'/name;out.mkdir(parents=True,exist_ok=True);start=time.monotonic();wave=os.environ['WAVE'];tag='candidates-wave-'+wave;report=dict(job_id=name,state='RUNNING',assigned_mesh_references=1,processed=0,failed=0,records=[],failures=[],scope='full_source_assembly_candidate',quality_accepted=False);parts=[];extras=[];expected_components=len(manifest['components']);expected_triangle_count=len(manifest['expected_original_triangle_ids']);expected_LOD_count=sum(e.get('expected_lod_count',3) for e in manifest['components'])
+root=Path.cwd();name=sys.argv[sys.argv.index('--')+1];manifest=json.loads((root/'wave-input'/f'{name}.json').read_text());out=root/'results'/name;out.mkdir(parents=True,exist_ok=True);start=time.monotonic();wave=os.environ['WAVE'];tag='candidates-wave-'+wave;report=dict(job_id=name,state='RUNNING',assigned_mesh_references=1,processed=0,failed=0,records=[],failures=[],scope='full_source_assembly_candidate',quality_accepted=False);parts=[];extras=[];last_publish=0;expected_components=len(manifest['components']);expected_triangle_count=len(manifest['expected_original_triangle_ids']);expected_LOD_count=sum(e.get('expected_lod_count',3) for e in manifest['components'])
 def checkpoint(stage,**kwargs):
- report.update(elapsed_seconds=round(time.monotonic()-start,2),updated_at=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),operator_progress=dict(stage=stage,peak_RSS_MiB=round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024,1),**kwargs));p=out/f'{name}-checkpoint.json';p.write_text(json.dumps(report));subprocess.run(['gh','release','upload',tag,str(p),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],check=True,capture_output=True);assert time.monotonic()-start<4.5*3600,'Assembly compute budget exceeded';assert resource.getrusage(resource.RUSAGE_SELF).ru_maxrss<12*1024*1024,'Assembly process exceeded12GiB safety budget'
+ global last_publish
+ report.update(elapsed_seconds=round(time.monotonic()-start,2),updated_at=time.strftime('%Y-%m-%dT%H:%M:%SZ',time.gmtime()),operator_progress=dict(stage=stage,peak_RSS_MiB=round(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024,1),**kwargs));p=out/f'{name}-checkpoint.json';p.write_text(json.dumps(report));publish_checkpoint(p);assert time.monotonic()-start<4.5*3600,'Assembly compute budget exceeded';assert resource.getrusage(resource.RUSAGE_SELF).ru_maxrss<12*1024*1024,'Assembly process exceeded12GiB safety budget'
+def publish_checkpoint(p):
+ global last_publish
+ if time.monotonic()-last_publish<300:return
+ release_upload(['gh','release','upload',tag,str(p),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber']);last_publish=time.monotonic()
+
 def download(owner,release,filename,sha=None):
  folder=root/'assembly-cache'/owner;folder.mkdir(parents=True,exist_ok=True);path=folder/filename
- if not path.exists():subprocess.run(['gh','release','download',release,'--repo',owner+'/mysim-cpu-benchmark','--pattern',filename,'--dir',str(folder)],check=True,capture_output=True)
+ if not path.exists():public_download(owner+'/mysim-cpu-benchmark',release,filename,path)
  if sha:assert hashlib.sha256(path.read_bytes()).hexdigest()==sha,'Archive SHA mismatch'
  return path
 try:
@@ -72,5 +79,5 @@ except Exception as error:
 hashes={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in out.iterdir() if p.suffix in {'.blend','.png'}};(out/'SHA256SUMS.json').write_text(json.dumps(hashes));archive=root/f'{name}-{os.environ["GITHUB_RUN_ID"]}.zip'
 with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED,compresslevel=1) as z:
  for path in out.iterdir():z.write(path,path.name)
-subprocess.run(['gh','release','upload',tag,str(archive),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],check=True,capture_output=True)
+release_upload(['gh','release','upload',tag,str(archive),'--repo',os.environ['GITHUB_REPOSITORY'],'--clobber'],mandatory=True)
 if report['failed']:raise RuntimeError('Assembly validation failed; evidence retained')
