@@ -34,7 +34,7 @@ for index,recipe in enumerate(job['recipes']):
         if recipe.get('prototype_source_tile_only'):
             from drain_patch import extract_source_tile_patch
             report['prototype_source_patch']=extract_source_tile_patch(obj,recipe)
-        recipe['_operator_progress_callback']=operator_progress;result,extra=rebuild(obj,recipe,root/'wave-input');path=out/(recipe['procedure_id']+'.blend');result['review_images']=render_review(obj,extra,path);bpy.data.libraries.write(str(path),{obj,*extra},compress=True)
+        recipe['_operator_progress_callback']=operator_progress;recipe['_diagnostic_directory']=str(out);result,extra=rebuild(obj,recipe,root/'wave-input');path=out/(recipe['procedure_id']+'.blend');result['review_images']=render_review(obj,extra,path);bpy.data.libraries.write(str(path),{obj,*extra},compress=True)
         result.update(source_scope=job.get('scope','full_source_mesh'),procedure_id=recipe['procedure_id'],mesh=recipe['mesh'],source_key=key,category=recipe['category'],output=path.name,output_bytes=path.stat().st_size,sha256=hashlib.sha256(path.read_bytes()).hexdigest());records.append(result)
         # Release added grass geometry after saving this item; its output is already durable.
         for detail in extra:bpy.data.objects.remove(detail,do_unlink=True)
