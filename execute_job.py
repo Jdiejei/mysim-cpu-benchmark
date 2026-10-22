@@ -40,7 +40,7 @@ for index,recipe in enumerate(job['recipes']):
             loaded=key;report['import_repairs']=dict(import_patch.COUNTS)
         obj=bpy.context.scene.objects.get(recipe['mesh']);assert obj is not None,'Mesh not found'
         expected=recipe.get('specification') or {};assert len(obj.data.vertices)==expected.get('vertices',len(obj.data.vertices)),'Source mesh vertex count changed'
-        if not ((recipe['category']=='barrier' and ('armco' in obj.name.lower() or ('single' in obj.name.lower() and any(w in obj.name.lower() for w in ['tyre','tire'])))) or (recipe['category']=='ground' and any(w in obj.name.lower() for w in ['curb','kerb','ripple','drain']))):raise RuntimeError('Dedicated component reconstruction operator not yet validated for this asset family')
+        if not ((recipe.get('reconstruction_mode')=='source_surface_refinement' and recipe['category']=='barrier') or (recipe['category']=='barrier' and ('armco' in obj.name.lower() or ('single' in obj.name.lower() and any(w in obj.name.lower() for w in ['tyre','tire'])))) or (recipe['category']=='ground' and any(w in obj.name.lower() for w in ['curb','kerb','ripple','drain']))):raise RuntimeError('Dedicated component reconstruction operator not yet validated for this asset family')
         if recipe.get('prototype_source_tile_only'):
             from drain_patch import extract_source_tile_patch
             report['prototype_source_patch']=extract_source_tile_patch(obj,recipe)
