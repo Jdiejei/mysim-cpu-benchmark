@@ -48,7 +48,13 @@ def source_fidelity(candidate,source,limit=1200):
    for target_index in indices:
     target=mesh.loop_triangles[target_index];a,b,c=[vertices[i] for i in target.vertices]
     if (b-a).cross(c-a).length_squared<=1e-24:continue
-    projected_point=closest_point_on_tri(point,a,b,c);choices.append(((projected_point-point).length,target_index,projected_point))
+    projected_point=closest_point_on_tri(point,a,b,c);dist_c=(projected_point-point).length
+    # Exact identity first: a candidate triangle whose three corners coincide with the source triangle's
+    # corners has not moved at all. closest_point_on_tri runs in float32 and mislocates points on
+    # collinear/sliver source triangles (an identical triangle measured 1.8e-3 away), so identity decides.
+    src_c=[world_point(source,original.vertices[i].co) for i in tri.vertices];eps_id=max(max(source.dimensions),1e-8)*1e-6
+    if all(min((s-q).length for q in (a,b,c))<=eps_id for s in src_c):projected_point=point;dist_c=0.0
+    choices.append((dist_c,target_index,projected_point))
    assert choices,'No nondegenerate candidate source polygon';distance,index,near=min(choices,key=lambda x:x[0]);assert distance<=max(max(source.dimensions),1e-8)*.003,'Corresponding source polygon moved beyond source profile tolerance'
   if source_uv and target_uv:
    expected=sum((source_uv.data[i].uv for i in tri.loops),Vector((0,0)))/3;target=mesh.loop_triangles[index];corners=[vertices[i] for i in target.vertices];uvs=[Vector((*target_uv.data[i].uv,0)) for i in target.loops]
