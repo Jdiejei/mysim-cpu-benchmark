@@ -38,6 +38,10 @@ def source_fidelity(candidate,source,limit=1200):
   distances.append(nearest[3])
  source_uv=original.uv_layers[0] if original.uv_layers else None;target_uv=mesh.uv_layers.get(source_uv.name) if source_uv else None;tris=list(original.loop_triangles);step=max(1,math.ceil(len(tris)/limit))
  for tri in tris[::step]:
+  # A zero-area source triangle has no surface to move and no defined UV gradient; its corner positions are
+  # still covered by the source-vertex samples above, so only its face sample is skipped.
+  _sa,_sb,_sc=[world_point(source,original.vertices[i].co) for i in tri.vertices]
+  if (_sb-_sa).cross(_sc-_sa).length<=(max(max(source.dimensions),1e-8)*1e-6)**2:continue
   point=sum((world_point(source,original.vertices[i].co) for i in tri.vertices),Vector())/3;near,normal,index,distance=tree.find_nearest(point)
   if near is None:raise RuntimeError('Missing reconstructed face-nearest surface')
   distances.append(distance)
