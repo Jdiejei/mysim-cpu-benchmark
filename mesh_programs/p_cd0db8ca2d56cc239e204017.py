@@ -150,7 +150,7 @@ def _repair(points, faces, corner_uv, scale):
             newf.append(nf)
         faces=newf
     faces=_split_nonmanifold_boundary(points, faces, corner_uv)
-    for _pass in range(4):
+    for _pass in range(200):
         bad=[]
         for f in faces:
             for k in range(1,len(f)-1):
