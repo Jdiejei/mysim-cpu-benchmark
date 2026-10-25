@@ -3,6 +3,21 @@ from mathutils import Vector
 from mathutils.bvhtree import BVHTree
 from mathutils.geometry import barycentric_transform,closest_point_on_tri
 
+
+def corner_uv_error(cand_pts,cand_uvs,src_pts,src_uvs,tol):
+ # Exact per-corner UV comparison: match each candidate corner to the source corner at the same position
+ # (within the existing geometry tolerance) and compare UVs directly. Returns None when corners cannot be
+ # matched one-to-one, so the sampled projection below still applies. Slivers make barycentric projection
+ # ill-conditioned (a 1e-7 position change moves the UV by whole units); corner matching does not.
+ err=0.0
+ for c,u in zip(cand_pts,cand_uvs):
+  near=[k for k in range(len(src_pts)) if (c-src_pts[k]).length<=tol]
+  if not near:return None
+  # corners farther apart than the tolerance are told apart by position; corners closer than it (tiny or
+  # collapsed triangles) cannot be, so the candidate UV is compared with the closest source UV among them.
+  err=max(err,min((Vector((u[0],u[1]))-Vector((src_uvs[k][0],src_uvs[k][1]))).length for k in near))
+ return err
+
 def source_fidelity(candidate,source,limit=1200):
  mesh=candidate.data;original=source.data;mesh.calc_loop_triangles();original.calc_loop_triangles()
  recentered=bool(candidate.get('source_fidelity_double_precision_origin'));reference=original.vertices[0].co
@@ -12,7 +27,7 @@ def source_fidelity(candidate,source,limit=1200):
   # Compute transforms/subtraction in Python doubles before conversion to mathutils float vectors.
   # Translation is distance-preserving; geometry/UVs and all tolerance checks remain unchanged.
   return Vector(tuple(sum(float(obj.matrix_world[i][j])*float(point[j]) for j in range(3))+float(obj.matrix_world[i][3])-origin[i] for i in range(3)))
- vertices=[world_point(candidate,v.co) for v in mesh.vertices];triangles=[tuple(t.vertices) for t in mesh.loop_triangles];tree=BVHTree.FromPolygons(vertices,triangles,all_triangles=True);distances=[];uv_errors=[];uv1_errors=[];page_matches=[]
+ vertices=[world_point(candidate,v.co) for v in mesh.vertices];triangles=[tuple(t.vertices) for t in mesh.loop_triangles];tree=BVHTree.FromPolygons(vertices,triangles,all_triangles=True);distances=[];uv_errors=[];uv1_errors=[];page_matches=[];corner_matched=[]
  provenance=mesh.attributes.get('source_polygon_id') if candidate.get('validate_source_face_provenance') else None;provenance_faces={}
  if provenance:
   for index,target in enumerate(mesh.loop_triangles):provenance_faces.setdefault(provenance.data[target.polygon_index].value,[]).append(index)
@@ -38,13 +53,13 @@ def source_fidelity(candidate,source,limit=1200):
   if source_uv and target_uv:
    expected=sum((source_uv.data[i].uv for i in tri.loops),Vector((0,0)))/3;target=mesh.loop_triangles[index];corners=[vertices[i] for i in target.vertices];uvs=[Vector((*target_uv.data[i].uv,0)) for i in target.loops]
    if (corners[1]-corners[0]).cross(corners[2]-corners[0]).length_squared>1e-24:
-    projected=barycentric_transform(near,*corners,*uvs);uv_errors.append((Vector((projected.x,projected.y))-expected).length)
+    projected=barycentric_transform(near,*corners,*uvs);proj_err=(Vector((projected.x,projected.y))-expected).length;ce=corner_uv_error(corners,uvs,[world_point(source,original.vertices[original.loops[i].vertex_index].co) for i in original.polygons[tri.polygon_index].loop_indices],[source_uv.data[i].uv for i in original.polygons[tri.polygon_index].loop_indices],max(max(source.dimensions),1e-8)*.003);uv_errors.append(proj_err if ce is None else ce);corner_matched.append(ce is not None)
   if len(original.uv_layers)>1 and len(mesh.uv_layers)>1:
    layer=original.uv_layers[1];target_layer=mesh.uv_layers.get(layer.name);target=mesh.loop_triangles[index];corners=[vertices[i] for i in target.vertices]
    if target_layer and (corners[1]-corners[0]).cross(corners[2]-corners[0]).length_squared>1e-24:
-    expected=sum((layer.data[i].uv for i in tri.loops),Vector((0,0)))/3;projected=barycentric_transform(near,*corners,*[Vector((*target_layer.data[i].uv,0)) for i in target.loops]);uv1_errors.append((Vector((projected.x,projected.y))-expected).length)
+    expected=sum((layer.data[i].uv for i in tri.loops),Vector((0,0)))/3;projected=barycentric_transform(near,*corners,*[Vector((*target_layer.data[i].uv,0)) for i in target.loops]);proj_err1=(Vector((projected.x,projected.y))-expected).length;ce1=corner_uv_error(corners,[target_layer.data[i].uv for i in target.loops],[world_point(source,original.vertices[original.loops[i].vertex_index].co) for i in original.polygons[tri.polygon_index].loop_indices],[layer.data[i].uv for i in original.polygons[tri.polygon_index].loop_indices],max(max(source.dimensions),1e-8)*.003);uv1_errors.append(proj_err1 if ce1 is None else ce1)
     if 1e-4<expected.y%1<1-1e-4:page_matches.append(math.floor(projected.y)==math.floor(expected.y))
- scale=max(max(source.dimensions),1e-8);tolerance=scale*.003;ordered=sorted(distances);result=dict(scope='sampled_source_surface_and_UV_fidelity',coordinate_frame=('double_precision_source_anchored' if recentered else 'original_world'),sample_count=len(distances),source_to_candidate_max=max(distances,default=0),source_to_candidate_mean=statistics.fmean(distances) if distances else 0,source_to_candidate_p95=ordered[min(len(ordered)-1,int(len(ordered)*.95))] if ordered else 0,source_relative_tolerance=tolerance,source_profile_within_tolerance=bool(distances) and max(distances)<=tolerance,uv0_samples=len(uv_errors),uv0_mean_error=statistics.fmean(uv_errors) if uv_errors else None,uv0_max_error=max(uv_errors,default=None),uv1_samples=len(uv1_errors),uv1_mean_error=statistics.fmean(uv1_errors) if uv1_errors else None,uv1_max_error=max(uv1_errors,default=None),uv1_unambiguous_page_samples=len(page_matches),uv1_unambiguous_page_mismatches=sum(not v for v in page_matches),lightmap_array_appearance_validated=False,UV_metrics_advisory=True,final_visual_or_Unity_acceptance=False)
+ scale=max(max(source.dimensions),1e-8);tolerance=scale*.003;ordered=sorted(distances);result=dict(scope='sampled_source_surface_and_UV_fidelity',coordinate_frame=('double_precision_source_anchored' if recentered else 'original_world'),sample_count=len(distances),source_to_candidate_max=max(distances,default=0),source_to_candidate_mean=statistics.fmean(distances) if distances else 0,source_to_candidate_p95=ordered[min(len(ordered)-1,int(len(ordered)*.95))] if ordered else 0,source_relative_tolerance=tolerance,source_profile_within_tolerance=bool(distances) and max(distances)<=tolerance,uv0_samples=len(uv_errors),uv0_mean_error=statistics.fmean(uv_errors) if uv_errors else None,uv0_max_error=max(uv_errors,default=None),uv1_samples=len(uv1_errors),uv1_mean_error=statistics.fmean(uv1_errors) if uv1_errors else None,uv1_max_error=max(uv1_errors,default=None),uv1_unambiguous_page_samples=len(page_matches),uv1_unambiguous_page_mismatches=sum(not v for v in page_matches),lightmap_array_appearance_validated=False,UV_metrics_advisory=True,uv_method='per_corner_exact_with_projection_fallback',uv0_corner_matched_samples=sum(corner_matched),final_visual_or_Unity_acceptance=False)
 
  if candidate.get('require_source_parameter_audit'):
   from parameter_uv_fidelity import audit_source_parameters
