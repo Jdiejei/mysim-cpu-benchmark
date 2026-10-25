@@ -54,6 +54,13 @@ def source_fidelity(candidate,source,limit=1200):
     # collinear/sliver source triangles (an identical triangle measured 1.8e-3 away), so identity decides.
     src_c=[world_point(source,original.vertices[i].co) for i in tri.vertices];eps_id=max(max(source.dimensions),1e-8)*1e-6
     if all(min((s-q).length for q in (a,b,c))<=eps_id for s in src_c):projected_point=point;dist_c=0.0
+    else:
+     # Corner-offset bound: if the candidate triangle's corners sit within d of the source triangle's corners
+     # (best one-to-one pairing), the source centroid is within d of the candidate triangle, whatever the
+     # float32 closest-point routine says on a collapsed or sliver triangle.
+     import itertools
+     d_best=min(max((src_c[i]-cc[j]).length for i,j in enumerate(perm)) for perm in itertools.permutations(range(3)) for cc in [(a,b,c)])
+     if d_best<dist_c:dist_c=d_best;projected_point=point
     choices.append((dist_c,target_index,projected_point))
    assert choices,'No nondegenerate candidate source polygon';distance,index,near=min(choices,key=lambda x:x[0]);assert distance<=max(max(source.dimensions),1e-8)*.003,'Corresponding source polygon moved beyond source profile tolerance'
   if source_uv and target_uv:
